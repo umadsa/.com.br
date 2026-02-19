@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMADSA Ministerial | Liderança e Serviço</title>
+    <meta name="description" content="Portal Ministerial UMADSA - Agenda, Capelania e Alistamento.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#FDE047',
+                            500: '#D4AF37', // Dourado principal
+                            600: '#B5952F',
+                            700: '#967A26',
+                        },
+                        dark: '#0a0a0a'
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Roboto Slab', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1438283173091-5dbf5c5a3206?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-position: center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .fade-in-up { animation: fadeInUp 1s ease-out; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse-gold { animation: pulse-gold 2s infinite; }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* Modais */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 60;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: #171717; /* dark gray */
+            border: 1px solid #D4AF37;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+            color: white;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .gold-gradient-text {
+            background: linear-gradient(to right, #FDE047, #D4AF37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-dark text-gray-200">
+
+    <nav class="bg-black border-b border-gold-700 shadow-md fixed w-full z-40 transition-all" id="navbar">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border-2 border-gold-500 rounded flex items-center justify-center text-gold-500 font-bold text-xl">U</div>
+                <div>
+                    <h1 class="text-xl font-bold text-white leading-tight">UMADSA <span class="text-gold-500">MINISTERIAL</span></h1>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-6 font-semibold text-sm uppercase tracking-wide">
+                <a href="#home" class="hover:text-gold-500 transition">Início</a>
+                <a href="#agenda" class="hover:text-gold-500 transition">Agenda</a>
+                <a href="#capelania" class="hover:text-gold-500 transition">Capelania</a>
+                <a href="#alistamento" class="hover:text-gold-500 transition">Alistamento</a>
+                
+                <button onclick="openModal('loginModal')" class="bg-transparent border border-gold-500 text-gold-500 px-5 py-2 rounded hover:bg-gold-500 hover:text-black transition flex items-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Portal do Líder
+                </button>
+            </div>
+
+            <button class="md:hidden text-gold-500 text-2xl" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-black border-t border-gold-700 p-4 space-y-4">
+            <a href="#agenda" class="block text-white hover:text-gold-500">Agenda</a>
+            <a href="#capelania" class="block text-white hover:text-gold-500">Capelania</a>
+            <a href="#alistamento" class="block text-white hover:text-gold-500">Alistamento</a>
+            <button onclick="openModal('loginModal')" class="w-full text-left font-bold text-gold-500"><i class="fa-solid fa-lock"></i> Portal do Líder</button>
+        </div>
+    </nav>
+
+    <section id="home" class="hero-bg h-screen flex items-center justify-center text-center px-4">
+        <div class="max-w-4xl text-white fade-in-up mt-16">
+            <div class="mb-4 inline-block border border-gold-500 px-4 py-1 rounded-full">
+                <span class="text-xs md:text-sm font-bold uppercase tracking-widest text-gold-500">Chamados para Servir</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight uppercase">
+                O Chamado Exige <br><span class="gold-gradient-text">Excelência</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light">
+                Plataforma oficial para organização, agenda ministerial e alistamento de voluntários da UMADSA.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#alistamento" class="bg-gold-500 hover:bg-gold-600 text-black px-8 py-4 rounded font-bold uppercase tracking-wider transition shadow-lg">
+                    Faça Parte
+                </a>
+                <button onclick="openModal('loginModal')" class="bg-transparent border-2 border-white hover:border-gold-500 hover:text-gold-500 text-white px-8 py-4 rounded font-bold uppercase tracking-wider transition">
+                    Acesso Restrito
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="agenda" class="py-20 bg-white text-black">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Agenda Ministerial</h2>
+                <div class="w-24 h-1 bg-gold-500 mx-auto"></div>
+                <p class="mt-4 text-gray-600">Acompanhe as próximas reuniões, consagrações e eventos da liderança.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="border border-gray-200 rounded-lg p-6 hover:shadow-xl transition hover:border-gold-500 group">
+                    <div class="text-gold-500 font-bold text-lg mb-2"><i class="fa-regular fa-calendar-days"></i> 15 de Março, 2026</div>
+                    <h3 class="text-xl font-bold mb-2">Reunião Geral de Liderança</h3>
+                    <p class="text-gray-600 text-sm mb-4"><i class="fa-solid fa-location-dot mr-1"></i> Templo Sede - 19h30</p>
+                    <p class="text-sm text-gray-500 border-t pt-4">Convocação para todos os líderes de campo e congregação. Traje: Oficial.</p>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-6 hover:shadow-xl transition hover:border-gold-500 group">
+                    <div class="text-gold-500 font-bold text-lg mb-2"><i class="fa-regular fa-calendar-days"></i> 28 de Março, 2026</div>
+                    <h3 class="text-xl font-bold mb-2">Treinamento de Capelania</h3>
+                    <p class="text-gray-600 text-sm mb-4"><i class="fa-solid fa-location-dot mr-1"></i> Congregação Central - 14h00</p>
+                    <p class="text-sm text-gray-500 border-t pt-4">Módulo 1 para novos candidatos aprovados no alistamento.</p>
+                </div>
+
+                <div class="bg-black text-white rounded-lg p-6 shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gold-500 opacity-10 rounded-full blur-xl"></div>
+                    <div class="text-gold-500 font-bold text-lg mb-2"><i class="fa-solid fa-fire"></i> Todo Sábado</div>
+                    <h3 class="text-xl font-bold mb-2">Consagração UMADSA</h3>
+                    <p class="text-gray-300 text-sm mb-4"><i class="fa-solid fa-location-dot mr-1"></i> Polos Regionais - 08h00</p>
+                    <p class="text-sm text-gray-400 border-t border-gray-700 pt-4">Buscando revestimento e direcionamento espiritual.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="capelania" class="py-20 bg-dark border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4 text-white">Ministério de <span class="gold-gradient-text">Capelania</span></h2>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        A Capelania UMADSA atua levando consolo, esperança e a palavra de Deus a hospitais, presídios, asilos e escolas. Procuramos jovens e adultos maduros, dispostos a doar seu tempo e amor ao próximo.
+                    </p>
+                    <ul class="space-y-3 mb-8 text-gray-300 text-sm">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold-500"></i> Treinamento Teórico e Prático</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold-500"></i> Credenciamento Ministerial</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold-500"></i> Acompanhamento Psicológico e Pastoral</li>
+                    </ul>
+                    <button onclick="openModal('capelaniaModal')" class="bg-gold-500 text-black px-6 py-3 rounded font-bold hover:bg-gold-600 transition flex items-center gap-2 pulse-gold">
+                        <i class="fa-solid fa-address-card"></i> Candidatar-se à Capelania
+                    </button>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="border border-gold-600 p-2 rounded-lg relative">
+                        <div class="absolute inset-0 bg-gold-500 opacity-20 blur-lg rounded-lg"></div>
+                        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Capelania" class="rounded w-full h-auto relative z-10 grayscale hover:grayscale-0 transition duration-500 border border-gray-800">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="alistamento" class="py-20 bg-black">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Alistamento: Faça Parte!</h2>
+            <div class="w-24 h-1 bg-gold-500 mx-auto mb-8"></div>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-12">
+                O corpo de Cristo precisa dos seus talentos. Aliste-se em um dos nossos departamentos e sirva com excelência.
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="border border-gray-800 bg-dark p-8 rounded-lg hover:border-gold-500 transition">
+                    <i class="fa-solid fa-bullhorn text-4xl text-gold-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Comunicação e Mídia</h3>
+                    <p class="text-gray-500 text-sm mb-6">Fotografia, vídeo, redes sociais e transmissão ao vivo.</p>
+                    <button onclick="openModal('alistamentoModal')" class="text-gold-500 text-sm font-bold uppercase hover:underline">Quero Servir <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+                <div class="border border-gold-600 bg-black p-8 rounded-lg transform scale-105 shadow-2xl">
+                    <i class="fa-solid fa-hands-praying text-4xl text-gold-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Intercessão</h3>
+                    <p class="text-gray-400 text-sm mb-6">A base do nosso ministério. Guerreiros de oração pelos eventos e liderança.</p>
+                    <button onclick="openModal('alistamentoModal')" class="bg-gold-500 text-black w-full py-2 rounded font-bold hover:bg-gold-600 transition">Alistar-se</button>
+                </div>
+                <div class="border border-gray-800 bg-dark p-8 rounded-lg hover:border-gold-500 transition">
+                    <i class="fa-solid fa-clipboard-user text-4xl text-gold-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Recepção e Logística</h3>
+                    <p class="text-gray-500 text-sm mb-6">Organização de eventos, controle de acesso e acolhimento.</p>
+                    <button onclick="openModal('alistamentoModal')" class="text-gold-500 text-sm font-bold uppercase hover:underline">Quero Servir <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gradient-to-r from-gold-700 via-gold-500 to-gold-700 text-black">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-serif font-bold mb-4 uppercase tracking-widest text-black"><i class="fa-solid fa-crown mr-2"></i> Chamada aos Líderes</h2>
+            <p class="max-w-3xl mx-auto font-medium mb-8">
+                Você é Líder de Campo ou Congregação da UMADSA? Atualize seu cadastro agora mesmo e receba um material exclusivo de mentoria ministerial diretamente no seu e-mail!
+            </p>
+            <button onclick="openModal('liderSurpresaModal')" class="bg-black text-gold-500 px-8 py-4 rounded-lg font-bold uppercase tracking-wider hover:bg-gray-900 transition shadow-2xl border border-black hover:border-white">
+                Cadastrar e Receber Presente <i class="fa-solid fa-gift ml-2"></i>
+            </button>
+        </div>
+    </section>
+
+    <footer class="bg-black text-gray-500 py-10 border-t border-gray-800 text-center text-sm">
+        <div class="container mx-auto px-6">
+            <div class="w-12 h-12 border border-gray-700 rounded mx-auto flex items-center justify-center text-gray-500 font-bold text-xl mb-4">U</div>
+            <p class="mb-2">© 2026 UMADSA Ministerial. Todos os direitos reservados.</p>
+            <p>Forjando líderes, servindo com excelência.</p>
+        </div>
+    </footer>
+
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-lock text-4xl text-gold-500 mb-3"></i>
+                <h3 class="text-2xl font-bold font-serif text-white">Painel do Líder</h3>
+                <p class="text-gray-400 text-sm mt-1">Acesso restrito à coordenação.</p>
+            </div>
+            <form onsubmit="fazerLogin(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-gold-500 uppercase tracking-widest mb-1">Usuário / Credencial</label>
+                        <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gold-500 uppercase tracking-widest mb-1">Senha</label>
+                        <input type="password" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-8 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition">Acessar Painel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="capelaniaModal" class="modal-overlay">
+        <div class="modal-content">
+            <button onclick="closeModal('capelaniaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-id-badge text-4xl text-gold-500 mb-3"></i>
+                <h3 class="text-2xl font-bold font-serif text-white">Candidato a Capelão</h3>
+                <p class="text-gray-400 text-sm mt-1">Preencha para análise da diretoria.</p>
+            </div>
+            <form onsubmit="simularEnvio(event, 'capelaniaModal')">
+                <div class="space-y-3 text-sm">
+                    <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Nome Completo">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="tel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="WhatsApp">
+                        <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Congregação">
+                    </div>
+                    <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none">
+                        <option value="">Área de Interesse...</option>
+                        <option value="hospitalar">Capelania Hospitalar</option>
+                        <option value="prisional">Capelania Prisional</option>
+                        <option value="escolar">Capelania Escolar</option>
+                    </select>
+                    <textarea rows="2" class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Por que deseja ser capelão? (Opcional)"></textarea>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-transparent border border-gold-500 text-gold-500 font-bold py-3 rounded hover:bg-gold-500 hover:text-black transition">Enviar Cadastro</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="alistamentoModal" class="modal-overlay">
+        <div class="modal-content">
+            <button onclick="closeModal('alistamentoModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold font-serif text-white">Alistamento UMADSA</h3>
+                <p class="text-gray-400 text-sm mt-1">Estamos felizes com sua disposição!</p>
+            </div>
+            <form onsubmit="simularEnvio(event, 'alistamentoModal')">
+                <div class="space-y-3 text-sm">
+                    <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Nome">
+                    <input type="tel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="WhatsApp">
+                    <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500">
+                        <option value="">Departamento Desejado...</option>
+                        <option>Comunicação e Mídia</option>
+                        <option>Intercessão</option>
+                        <option>Recepção e Logística</option>
+                        <option>Outro</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition">Me Alistar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="liderSurpresaModal" class="modal-overlay">
+        <div class="modal-content border-2 border-gold-500" style="box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);">
+            <button onclick="closeModal('liderSurpresaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-gift text-4xl text-gold-500 mb-3"></i>
+                <h3 class="text-2xl font-bold font-serif text-white">Atualização de Liderança</h3>
+                <p class="text-gold-400 text-sm mt-1">Ao finalizar, enviaremos seu material surpresa!</p>
+            </div>
+            <form onsubmit="simularEnvio(event, 'liderSurpresaModal')">
+                <div class="space-y-3 text-sm">
+                    <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Nome do Líder">
+                    <div class="grid grid-cols-2 gap-3">
+                        <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500">
+                            <option value="">Cargo...</option>
+                            <option>Líder de Campo</option>
+                            <option>Líder de Congregação</option>
+                            <option>Vice-Líder</option>
+                        </select>
+                        <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Setor/Congregação">
+                    </div>
+                    <input type="email" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="E-mail (Para receber o material)">
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition uppercase tracking-wide">Finalizar e Receber Presente</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // Funções para abrir/fechar modais
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Fechar clicando fora
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = "none";
+            }
+        }
+
+        // Simulação de Login (Para demonstração do Front-End)
+        function fazerLogin(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Autenticando...';
+            
+            setTimeout(() => {
+                alert("Redirecionando para o painel de gestão interno...");
+                closeModal('loginModal');
+                btn.innerHTML = 'Acessar Painel';
+                e.target.reset();
+            }, 1500);
+        }
+
+        // Simulação de envio de formulários
+        function simularEnvio(e, modalId) {a
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
+            
+            setTimeout(() => {
+                if(modalId === 'liderSurpresaModal') {
+                    alert("Cadastro atualizado com sucesso! Verifique seu e-mail em alguns minutos para acessar seu presente.");
+                } else {
+                    alert("Dados enviados com sucesso! A diretoria entrará em contato.");
+                }
+                closeModal(modalId);
+                btn.innerHTML = originalText;
+                e.target.reset();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
