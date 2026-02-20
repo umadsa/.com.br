@@ -378,17 +378,17 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) event.target.style.display = "none"; }
 
-        function fazerLogin(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Autenticando...';
-            setTimeout(() => {
-                alert("Redirecionando para o painel de gestão interno...");
-                closeModal('loginModal');
-                btn.innerHTML = 'Acessar Painel';
-                e.target.reset();
-            }, 1500);
-        }
+function fazerLogin(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Autenticando...';
+    
+    setTimeout(() => {
+        // Redireciona o usuário para a página do painel
+        window.location.href = 'painel-lider.html';
+    }, 1500);
+}
+
 
         function simularEnvio(e, modalId) {
             e.preventDefault();
