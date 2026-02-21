@@ -35,6 +35,9 @@
         
         .event-row { transition: all 0.2s ease; }
         .event-row:hover { border-left-color: #D4AF37; background-color: #fff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+        /* Estilo para os selects de filtro */
+        select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -47,22 +50,49 @@
                     <h1 class="text-base md:text-xl font-bold text-white leading-tight">UMADSA <span class="text-gold-500">AGENDA</span></h1>
                 </div>
             </div>
-            <a href="index.html" class="text-gray-400 hover:text-gold-500 text-[10px] md:text-sm font-bold uppercase tracking-widest transition">
-                <i class="fa-solid fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Voltar ao Site</span>
+            <a href="index1.html" class="text-gray-400 hover:text-gold-500 text-[10px] md:text-sm font-bold uppercase tracking-widest transition">
+                <i class="fa-solid fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Voltar ao Portal</span>
             </a>
         </div>
     </header>
 
     <main class="flex-1 container mx-auto px-4 md:px-6 py-10 max-w-5xl">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 border-b border-gray-200 pb-6">
-            <div>
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-8 gap-4 border-b border-gray-200 pb-6">
+            <div class="mb-4 lg:mb-0">
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-black leading-tight">Cronograma Oficial</h2>
-                <p class="text-gray-500 mt-2">Acompanhe todos os eventos ministeriais programados para o ano.</p>
+                <p class="text-gray-500 mt-2">Acompanhe todos os eventos e trabalhos programados para o ano da UMADSA.</p>
             </div>
             
-            <div class="relative w-full md:w-72">
-                <input type="text" id="searchInput" onkeyup="filterEvents()" placeholder="Procurar evento ou local..." class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+            <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
+                <select id="filterMonth" onchange="filterEvents()" class="w-full md:w-40 pl-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 text-gray-700">
+                    <option value="">Qualquer Mês</option>
+                    <option value="01">Janeiro</option>
+                    <option value="02">Fevereiro</option>
+                    <option value="03">Março</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Maio</option>
+                    <option value="06">Junho</option>
+                    <option value="07">Julho</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
+
+                <select id="filterLevel" onchange="filterEvents()" class="w-full md:w-48 pl-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 text-gray-700">
+                    <option value="">Qualquer Nível</option>
+                    <option value="Ministerial">Ministerial</option>
+                    <option value="Regional">Regional</option>
+                    <option value="Campo">Campo</option>
+                    <option value="Congregação">Congregação</option>
+                    <option value="Geral">Geral</option>
+                </select>
+
+                <div class="relative w-full md:w-64">
+                    <input type="text" id="searchInput" onkeyup="filterEvents()" placeholder="Buscar local ou evento..." class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                </div>
             </div>
         </div>
 
@@ -107,7 +137,7 @@
                     </div>
                     <div>
                         <p class="text-gray-400 text-xs uppercase font-bold">Localização</p>
-                        <p class="text-white font-medium" id="modalEventLocation">Local</p>
+                        <p class="text-white font-medium leading-relaxed" id="modalEventLocation">Local</p>
                     </div>
                 </div>
                 <div class="pt-4 mt-4 border-t border-gray-800">
@@ -140,8 +170,14 @@
                 const data = await res.json();
                 
                 if(data.result === 'success') {
-                    // Ordena por data mais recente
-                    fullAgendaData = data.events.sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+                    // Filtra apenas eventos de hoje em diante
+                    const hoje = new Date();
+                    hoje.setHours(0,0,0,0);
+                    
+                    fullAgendaData = data.events
+                        .filter(ev => new Date(ev.dataInicio + "T00:00:00") >= hoje)
+                        .sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+                    
                     renderFullAgenda(fullAgendaData);
                 } else {
                     document.getElementById('fullAgendaList').innerHTML = `<p class="text-center text-red-500 py-10 font-bold">Erro ao carregar: ${data.message}</p>`;
@@ -169,7 +205,13 @@
                 const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
 
                 const tituloDisplay = ev.tipo;
-                const localDisplay = ev.local ? ev.local : (ev.campo || ev.regional);
+                
+                // Formatar Local com Campo e Congregação
+                let hierarquiaLocal = ev.campo || ev.regional;
+                if (ev.congregacao) {
+                    hierarquiaLocal += ` - ${ev.congregacao}`;
+                }
+                const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
 
                 const row = `
                     <div class="event-row bg-white border border-gray-200 border-l-4 border-l-gray-300 rounded-lg p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer" onclick="openEventDetails('${ev.id}')">
@@ -183,7 +225,7 @@
                             <div>
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-gold-600 bg-gold-400/10 px-2 py-0.5 rounded">${ev.nivel}</span>
                                 <h3 class="text-lg font-bold text-black mt-1 leading-tight">${tituloDisplay}</h3>
-                                <p class="text-gray-500 text-sm mt-1 truncate max-w-[280px] md:max-w-md"><i class="fa-regular fa-clock mr-1"></i> ${ev.horario} <span class="mx-2 text-gray-300">|</span> <i class="fa-solid fa-location-dot mr-1"></i> ${localDisplay}</p>
+                                <p class="text-gray-500 text-sm mt-1 truncate max-w-[280px] md:max-w-md" title="${localDisplay}"><i class="fa-regular fa-clock mr-1"></i> ${ev.horario} <span class="mx-2 text-gray-300">|</span> <i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                             </div>
                         </div>
 
@@ -198,13 +240,29 @@
             });
         }
 
+        // Função de filtro com Pesquisa de Texto, Mês e Nível
         function filterEvents() {
             const term = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = fullAgendaData.filter(ev => 
-                ev.tipo.toLowerCase().includes(term) || 
-                (ev.local && ev.local.toLowerCase().includes(term)) ||
-                (ev.campo && ev.campo.toLowerCase().includes(term))
-            );
+            const selectedMonth = document.getElementById('filterMonth').value;
+            const selectedLevel = document.getElementById('filterLevel').value;
+
+            const filtered = fullAgendaData.filter(ev => {
+                // Filtro de Texto (Título, Local, Campo ou Congregação)
+                const matchTerm = ev.tipo.toLowerCase().includes(term) || 
+                                  (ev.local && ev.local.toLowerCase().includes(term)) ||
+                                  (ev.campo && ev.campo.toLowerCase().includes(term)) ||
+                                  (ev.congregacao && ev.congregacao.toLowerCase().includes(term));
+                
+                // Filtro de Mês (Extraído da data YYYY-MM-DD)
+                const evMonth = ev.dataInicio.split('-')[1];
+                const matchMonth = selectedMonth === "" || evMonth === selectedMonth;
+
+                // Filtro de Nível
+                const matchLevel = selectedLevel === "" || ev.nivel === selectedLevel;
+
+                return matchTerm && matchMonth && matchLevel;
+            });
+
             renderFullAgenda(filtered);
         }
 
@@ -221,7 +279,14 @@
             const dateObj = new Date(selectedEvent.dataInicio + "T00:00:00");
             const dateStr = dateObj.toLocaleDateString('pt-BR');
 
-            const localDisplay = selectedEvent.local ? selectedEvent.local : `${selectedEvent.campo} (${selectedEvent.regional})`;
+            // Formatar Local no Modal
+            let hierarquiaModal = selectedEvent.campo || "Geral";
+            if (selectedEvent.congregacao) {
+                hierarquiaModal += ` - ${selectedEvent.congregacao}`;
+            }
+            hierarquiaModal += ` (${selectedEvent.regional})`;
+
+            const localDisplay = selectedEvent.local ? `${hierarquiaModal} | Endereço: ${selectedEvent.local}` : hierarquiaModal;
 
             document.getElementById('modalEventNivel').innerText = selectedEvent.nivel;
             document.getElementById('modalEventTitle').innerText = selectedEvent.tipo;
@@ -244,8 +309,20 @@
             const endT = endDate.toTimeString().split('T')[1].replace(/:/g, '').substring(0, 6);
             const endStr = `${endD}T${endT}`;
 
-            const titulo = `${ev.tipo} - ${ev.nivel}`;
-            const local = ev.local || ev.campo;
+            // Título detalhado para a Agenda
+            let titulo = `${ev.tipo} | ${ev.nivel} | ${ev.campo || ev.regional}`;
+            if (ev.congregacao) {
+                titulo += ` - ${ev.congregacao}`;
+            }
+
+            // Local detalhado para a Agenda (Maps)
+            let local = ev.campo || ev.regional;
+            if (ev.congregacao) {
+                local += ` - ${ev.congregacao}`;
+            }
+            if (ev.local) {
+                local += `, ${ev.local}`;
+            }
 
             const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao)}&location=${encodeURIComponent(local)}`;
             window.open(url, '_blank');
