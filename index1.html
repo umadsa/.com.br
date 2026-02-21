@@ -327,6 +327,26 @@
         </div>
     </div>
 
+    <div id="successCapelaniaModal" class="modal-overlay">
+        <div class="modal-content border-t-4 border-gold-500 text-center">
+            <button onclick="closeModal('successCapelaniaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <i class="fa-solid fa-hands-praying text-5xl text-gold-500 mb-4"></i>
+            <h3 class="text-2xl font-serif font-bold text-white mb-2">Glória a Deus pela sua vida!</h3>
+            <p class="text-gray-300 mb-6 text-sm">Agradecemos imensamente o seu interesse em se tornar um Capelão e fazer a diferença através deste ministério.</p>
+            
+            <div class="bg-dark p-4 rounded-lg border border-gray-800 mb-6 text-sm text-gray-400 text-left">
+                <p><i class="fa-solid fa-bullhorn text-gold-500 mr-2"></i> <strong>Atenção:</strong> O Campo que obtiver o maior número de inscritos (mínimo de 20 interessados) <strong>receberá o curso de Capelania presencialmente na sua própria congregação Sede</strong>, dispensando a necessidade de deslocamento até a Matriz Central!</p>
+            </div>
+
+            <p class="text-white font-bold mb-4 text-sm">Que tal convidar outros irmãos do seu Campo para batermos essa meta?</p>
+            
+            <button onclick="compartilharWhatsAppCapelania()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-500 transition flex items-center justify-center gap-2 uppercase tracking-wide">
+                <i class="fa-brands fa-whatsapp text-xl"></i> Convidar no WhatsApp
+            </button>
+        </div>
+    </div>
+
     <div id="alistamentoModal" class="modal-overlay">
         <div class="modal-content">
             <button onclick="closeModal('alistamentoModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -418,7 +438,7 @@
     </div>
 
     <script>
-// Funções Básicas
+        // Funções Básicas
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) event.target.style.display = "none"; }
@@ -457,8 +477,8 @@
             input.value = value;
         }
 
-// ==========================================
-        // LÓGICA DO FORMULÁRIO DE CAPELANIA (ENVIO REAL)
+        // ==========================================
+        // LÓGICA DO FORMULÁRIO DE CAPELANIA E COMPARTILHAR WHATSAPP
         // ==========================================
         let dbHierarquia = {}; // Salva a hierarquia para uso nos dropdowns
 
@@ -492,13 +512,16 @@
                 const resData = await response.json();
 
                 if (resData.status === 'success') {
-                    alert("Cadastro enviado com sucesso! Protocolo: " + resData.data.protocolo + "\nA diretoria entrará em contato em breve.");
+                    // Limpa e Fecha form
                     closeModal('capelaniaModal');
                     document.getElementById('formCapelania').reset();
-                    // Reseta o dropdown de congregação
                     document.getElementById('capelaniaCongregacao').disabled = true;
+                    document.getElementById('capelaniaCongregacao').classList.add('opacity-50');
+                    
+                    // ABRE NOVO MODAL DE SUCESSO (Vigia Varão / Parabéns)
+                    openModal('successCapelaniaModal');
                 } else {
-                    alert("Erro ao enviar: " + resData.message);
+                    alert("Erro ao enviar: " + (resData.message || "Erro desconhecido."));
                 }
             } catch (error) {
                 alert("Erro de conexão com o servidor. Tente novamente mais tarde.");
@@ -509,7 +532,16 @@
             }
         }
 
-// ==========================================
+        // Função de acionar Whatsapp a partir do Modal de Sucesso da Capelania
+        function compartilharWhatsAppCapelania() {
+            const baseUrl = window.location.href.split('#')[0]; // URL limpa do portal
+            const textoMensagem = `*Ei vaso, vamos fazer o IDE juntos!* 🔥\n\nAcabei de fazer a minha inscrição para o Ministério de Capelania da UMADSA.\n\nSabia que se o nosso Campo atingir a meta de *20 inscritos*, o curso de capelania será realizado presencialmente na nossa congregação sede? E não vamos precisar ir até a Matriz!\n\nFaça sua inscrição também, garanta a sua vaga e vamos bater essa meta pelo nosso Campo:\n\n👉 ${baseUrl}#capelania`;
+            
+            const whatsappLink = `https://wa.me/?text=${encodeURIComponent(textoMensagem)}`;
+            window.open(whatsappLink, '_blank');
+        }
+
+        // ==========================================
         // BUSCAR E POPULAR DROPDOWNS DE CAPELANIA
         // ==========================================
         async function fetchHierarquiaCapelania() {
@@ -567,15 +599,16 @@
 
             if (congregacoesEncontradas.length > 0) {
                 selectCong.disabled = false;
+                selectCong.classList.remove('opacity-50', 'cursor-not-allowed');
                 
                 congregacoesEncontradas.sort().forEach(cong => {
                     selectCong.innerHTML += `<option value="${cong}">${cong}</option>`;
                 });
             } else {
                 selectCong.disabled = true;
+                selectCong.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
-
 
         // ==========================================
         // FUNÇÕES SIMULADAS (PARA OS OUTROS MODAIS)
@@ -672,7 +705,7 @@
                 
                 const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
 
-                // CARD TOTALMENTE RESPONSIVO
+                // CARD TOTALMENTE RESPONSIVO E COM TRUNCATE PARA NÃO ESTICAR O LAYOUT
                 const card = `
                     <div class="event-card border border-gray-200 bg-white rounded-lg p-6 cursor-pointer relative group flex flex-col h-full mx-auto w-full max-w-sm md:max-w-none" onclick="openEventDetails('${ev.id}')">
                         <div class="text-gold-500 font-bold text-lg mb-3 flex items-center gap-2">
@@ -684,7 +717,7 @@
                         </div>
                         <h3 class="text-xl font-bold mb-2 text-black leading-tight">${tituloDisplay}</h3>
                         <p class="text-gray-500 text-xs mb-4 uppercase font-bold tracking-widest bg-gray-100 inline-block px-2 py-1 rounded">${ev.nivel}</p>
-                        <div class="mt-auto pt-4 border-t border-gray-100">
+                        <div class="mt-auto pt-4 border-t border-gray-100 flex-1 min-w-0">
                             <p class="text-xs font-bold text-gray-400 uppercase truncate" title="${localDisplay}"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                         </div>
                         
