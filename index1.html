@@ -91,7 +91,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* Animação suave para troca de eventos */
+        /* Efeito Hover nos Cards da Agenda */
         .event-card { transition: all 0.3s ease; }
         .event-card:hover { transform: translateY(-5px); border-color: #D4AF37; box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.3); }
     </style>
@@ -173,14 +173,18 @@
             </div>
 
             <div id="agendaGrid" class="grid md:grid-cols-3 gap-6 mb-10 min-h-[250px]">
+                <div class="col-span-3 text-center py-12 text-gray-500">
+                    <i class="fa-solid fa-spinner fa-spin text-4xl text-gold-500 mb-4"></i>
+                    <p class="font-bold">A carregar os próximos eventos oficiais...</p>
                 </div>
+            </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gray-200 pt-8">
                 <div class="flex items-center gap-4">
                     <button onclick="prevEvents()" id="btnPrevEvents" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gold-500 hover:text-gold-500 transition disabled:opacity-30 disabled:cursor-not-allowed">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
-                    <span class="text-sm font-bold text-gray-400" id="agendaCounter">1 de 3</span>
+                    <span class="text-sm font-bold text-gray-400" id="agendaCounter">1 de 1</span>
                     <button onclick="nextEvents()" id="btnNextEvents" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gold-500 hover:text-gold-500 transition disabled:opacity-30 disabled:cursor-not-allowed">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
@@ -271,45 +275,6 @@
         </div>
     </footer>
 
-    <div id="eventDetailsModal" class="modal-overlay">
-        <div class="modal-content border-t-4 border-gold-500">
-            <button onclick="closeModal('eventDetailsModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <div class="mb-6 border-b border-gray-800 pb-4 pr-6">
-                <span class="text-gold-500 text-xs font-bold uppercase tracking-widest" id="modalEventNivel">Nível</span>
-                <h3 class="text-2xl font-serif font-bold text-white mt-1 leading-tight" id="modalEventTitle">Título do Evento</h3>
-            </div>
-            
-            <div class="space-y-4 mb-8 text-sm">
-                <div class="flex items-start gap-4">
-                    <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
-                        <i class="fa-regular fa-calendar"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-400 text-xs uppercase font-bold">Data e Hora</p>
-                        <p class="text-white font-medium" id="modalEventDateTime">00/00/0000 - 00:00</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-4">
-                    <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
-                        <i class="fa-solid fa-location-dot"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-400 text-xs uppercase font-bold">Localização</p>
-                        <p class="text-white font-medium" id="modalEventLocation">Local</p>
-                    </div>
-                </div>
-                <div class="pt-4 mt-4 border-t border-gray-800">
-                    <p class="text-gray-400 text-xs uppercase font-bold mb-2">Sobre o Evento</p>
-                    <p class="text-gray-300 leading-relaxed" id="modalEventDesc">Descrição completa aqui.</p>
-                </div>
-            </div>
-
-            <button id="btnAddToCalendar" class="w-full bg-gold-500 text-black font-bold py-4 rounded hover:bg-gold-600 transition flex items-center justify-center gap-2 uppercase tracking-wide">
-                <i class="fa-brands fa-google"></i> Adicionar à Minha Agenda
-            </button>
-        </div>
-    </div>
-
     <div id="capelaniaModal" class="modal-overlay">
         <div class="modal-content">
             <button onclick="closeModal('capelaniaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -389,8 +354,47 @@
         </div>
     </div>
 
+    <div id="eventDetailsModal" class="modal-overlay">
+        <div class="modal-content border-t-4 border-gold-500">
+            <button onclick="closeModal('eventDetailsModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="mb-6 border-b border-gray-800 pb-4 pr-6">
+                <span class="text-gold-500 text-xs font-bold uppercase tracking-widest" id="modalEventNivel">Nível</span>
+                <h3 class="text-2xl font-serif font-bold text-white mt-1 leading-tight" id="modalEventTitle">Título do Evento</h3>
+            </div>
+            
+            <div class="space-y-4 mb-8 text-sm">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
+                        <i class="fa-regular fa-calendar"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase font-bold">Data e Hora</p>
+                        <p class="text-white font-medium" id="modalEventDateTime">00/00/0000 - 00:00</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase font-bold">Localização</p>
+                        <p class="text-white font-medium" id="modalEventLocation">Local</p>
+                    </div>
+                </div>
+                <div class="pt-4 mt-4 border-t border-gray-800">
+                    <p class="text-gray-400 text-xs uppercase font-bold mb-2">Sobre o Evento</p>
+                    <p class="text-gray-300 leading-relaxed whitespace-pre-wrap" id="modalEventDesc">Descrição completa aqui.</p>
+                </div>
+            </div>
+
+            <button id="btnAddToCalendar" class="w-full bg-gold-500 text-black font-bold py-4 rounded hover:bg-gold-600 transition flex items-center justify-center gap-2 uppercase tracking-wide">
+                <i class="fa-brands fa-google"></i> Adicionar à Minha Agenda
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Funcionalidades Gerais Modais
+        // Funções Básicas
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) event.target.style.display = "none"; }
@@ -413,53 +417,89 @@
         }
 
         // ==========================================
-        // LÓGICA DA AGENDA DINÂMICA
+        // LÓGICA DA AGENDA (API DO GOOGLE)
         // ==========================================
         
-        // Simulação de banco de dados (Max 10 eventos ordenados)
-        const mockAgendaData = [
-            { id: 1, title: "Reunião Geral de Liderança", date: "2026-03-15", time: "19:30", location: "Templo Sede (Santo André)", nivel: "Ministerial Regional", desc: "Convocação para todos os líderes de campo e congregação. Traje: Oficial da liderança UMADSA." },
-            { id: 2, title: "Treinamento de Capelania", date: "2026-03-28", time: "14:00", location: "Congregação Central", nivel: "Campo", desc: "Módulo 1 para novos candidatos aprovados no alistamento. Trazer material de anotação." },
-            { id: 3, title: "Consagração UMADSA Jovem", date: "2026-04-04", time: "08:00", location: "Polos Regionais", nivel: "Congregação", desc: "Buscando revestimento e direcionamento espiritual para o próximo trimestre." },
-            { id: 4, title: "Culto de Verão Jovem", date: "2026-04-11", time: "19:00", location: "Sede Santo André", nivel: "Ministerial Regional", desc: "Noite de louvor, adoração e comunhão com a juventude de toda a região." },
-            { id: 5, title: "Congresso de Missões", date: "2026-05-15", time: "18:00", location: "Templo Sede", nivel: "Geral", desc: "Abertura oficial do congresso anual focado no trabalho missionário urbano." },
-            { id: 6, title: "Mentoria Online para Líderes", date: "2026-06-02", time: "20:00", location: "Online (Google Meet)", nivel: "Liderança", desc: "Reunião de alinhamento com a presidência ministerial." },
-            { id: 7, title: "Vigília Jovem", date: "2026-06-20", time: "23:00", location: "Congregação Betel", nivel: "Campo", desc: "Uma noite inteira na presença de Deus, com louvor e intercessão." },
-            { id: 8, title: "Ação Social na Comunidade", date: "2026-07-10", time: "09:00", location: "Praça Central", nivel: "Ministerial Regional", desc: "Distribuição de alimentos, corte de cabelo e evangelismo de rua." },
-            { id: 9, title: "Seminário Teológico", date: "2026-08-05", time: "14:00", location: "Auditório Principal", nivel: "Ministerial Regional", desc: "Estudo aprofundado sobre Escatologia e o papel do jovem no fim dos tempos." },
-            { id: 10, title: "Acampamento UMADSA", date: "2026-10-10", time: "08:00", location: "Sítio Recanto Feliz", nivel: "Geral", desc: "Retiro espiritual de 3 dias para desconectar do mundo e conectar com Deus." }
-        ];
+        // 👉 COLE A SUA URL DO GOOGLE APPS SCRIPT AQUI 👈
+        const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec"; 
 
+        let agendaData = [];
         let currentAgendaPage = 0;
         const eventsPerPage = 3;
+
+        async function carregarAgenda() {
+            const grid = document.getElementById('agendaGrid');
+            
+            try {
+                const res = await fetch(GOOGLE_API_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'read' })
+                });
+                
+                const data = await res.json();
+                
+                if(data.result === 'success') {
+                    // Filtra apenas eventos de hoje em diante e ordena
+                    const hoje = new Date();
+                    hoje.setHours(0,0,0,0);
+                    
+                    agendaData = data.events
+                        .filter(ev => new Date(ev.dataInicio + "T00:00:00") >= hoje)
+                        .sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+                    
+                    // Limita aos próximos 10 eventos no carrossel da home
+                    if(agendaData.length > 10) agendaData = agendaData.slice(0, 10);
+                    
+                    renderAgenda();
+                } else {
+                    grid.innerHTML = `<div class="col-span-3 text-center py-10 text-red-500 font-bold">Erro ao carregar agenda: ${data.message}</div>`;
+                }
+            } catch(e) {
+                grid.innerHTML = `<div class="col-span-3 text-center py-10 text-red-500 font-bold">Falha de conexão com a Agenda Oficial. Verifique se a URL do Script está correta.</div>`;
+                console.error(e);
+            }
+        }
 
         function renderAgenda() {
             const grid = document.getElementById('agendaGrid');
             grid.innerHTML = '';
 
+            if(agendaData.length === 0) {
+                grid.innerHTML = '<div class="col-span-3 text-center py-10 text-gray-500 font-medium">Nenhum evento futuro programado no momento.</div>';
+                document.getElementById('btnPrevEvents').disabled = true;
+                document.getElementById('btnNextEvents').disabled = true;
+                document.getElementById('agendaCounter').innerText = `Pág. 0 de 0`;
+                return;
+            }
+
             const startIndex = currentAgendaPage * eventsPerPage;
             const endIndex = startIndex + eventsPerPage;
-            const eventsToShow = mockAgendaData.slice(startIndex, endIndex);
+            const eventsToShow = agendaData.slice(startIndex, endIndex);
 
             eventsToShow.forEach(ev => {
-                // Formatação simples de data
-                const dateObj = new Date(ev.date + "T00:00:00");
+                const dateObj = new Date(ev.dataInicio + "T00:00:00");
                 const day = String(dateObj.getDate()).padStart(2, '0');
                 const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
 
+                // Formatar Título e Local
+                const tituloDisplay = ev.tipo;
+                const localDisplay = ev.local ? ev.local : (ev.campo || ev.regional);
+
                 const card = `
-                    <div class="event-card border border-gray-200 bg-white rounded-lg p-6 cursor-pointer relative group flex flex-col h-full" onclick="openEventDetails(${ev.id})">
+                    <div class="event-card border border-gray-200 bg-white rounded-lg p-6 cursor-pointer relative group flex flex-col h-full" onclick="openEventDetails('${ev.id}')">
                         <div class="text-gold-500 font-bold text-lg mb-3 flex items-center gap-2">
-                            <div class="bg-dark text-gold-500 rounded px-3 py-1 flex flex-col items-center leading-none shadow">
+                            <div class="bg-dark text-gold-500 rounded px-3 py-1 flex flex-col items-center leading-none shadow shrink-0">
                                 <span class="text-[10px]">${month}</span>
                                 <span class="text-lg">${day}</span>
                             </div>
-                            <span class="text-sm font-medium text-gray-500 ml-1"><i class="fa-regular fa-clock"></i> ${ev.time}</span>
+                            <span class="text-sm font-medium text-gray-500 ml-1"><i class="fa-regular fa-clock"></i> ${ev.horario}</span>
                         </div>
-                        <h3 class="text-xl font-bold mb-2 text-black leading-tight">${ev.title}</h3>
-                        <p class="text-gray-500 text-sm mb-4 line-clamp-2">${ev.desc}</p>
+                        <h3 class="text-xl font-bold mb-2 text-black leading-tight">${tituloDisplay}</h3>
+                        <p class="text-gray-500 text-xs mb-4 uppercase font-bold tracking-widest">${ev.nivel}</p>
                         <div class="mt-auto pt-4 border-t border-gray-100">
-                            <p class="text-xs font-bold text-gray-400 uppercase"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${ev.location}</p>
+                            <p class="text-xs font-bold text-gray-400 uppercase truncate"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                         </div>
                         
                         <div class="absolute inset-0 bg-gold-500 bg-opacity-0 group-hover:bg-opacity-10 transition rounded-lg flex items-center justify-center">
@@ -470,15 +510,15 @@
                 grid.innerHTML += card;
             });
 
-            // Atualiza botões de paginação
-            const totalPages = Math.ceil(mockAgendaData.length / eventsPerPage);
+            // Controle de Paginação
+            const totalPages = Math.ceil(agendaData.length / eventsPerPage);
             document.getElementById('btnPrevEvents').disabled = currentAgendaPage === 0;
             document.getElementById('btnNextEvents').disabled = currentAgendaPage >= totalPages - 1;
             document.getElementById('agendaCounter').innerText = `Pág. ${currentAgendaPage + 1} de ${totalPages}`;
         }
 
         function nextEvents() {
-            if ((currentAgendaPage + 1) * eventsPerPage < mockAgendaData.length) {
+            if ((currentAgendaPage + 1) * eventsPerPage < agendaData.length) {
                 currentAgendaPage++;
                 renderAgenda();
             }
@@ -494,45 +534,44 @@
         let selectedEvent = null;
 
         function openEventDetails(id) {
-            selectedEvent = mockAgendaData.find(e => e.id === id);
+            selectedEvent = agendaData.find(e => e.id === id);
             if(!selectedEvent) return;
 
-            // Formatar data BR
-            const dateObj = new Date(selectedEvent.date + "T00:00:00");
+            const dateObj = new Date(selectedEvent.dataInicio + "T00:00:00");
             const dateStr = dateObj.toLocaleDateString('pt-BR');
+            const localDisplay = selectedEvent.local ? selectedEvent.local : `${selectedEvent.campo} (${selectedEvent.regional})`;
 
             document.getElementById('modalEventNivel').innerText = selectedEvent.nivel;
-            document.getElementById('modalEventTitle').innerText = selectedEvent.title;
-            document.getElementById('modalEventDateTime').innerText = `${dateStr} às ${selectedEvent.time}h`;
-            document.getElementById('modalEventLocation').innerText = selectedEvent.location;
-            document.getElementById('modalEventDesc').innerText = selectedEvent.desc;
+            document.getElementById('modalEventTitle').innerText = selectedEvent.tipo;
+            document.getElementById('modalEventDateTime').innerText = `${dateStr} às ${selectedEvent.horario}h`;
+            document.getElementById('modalEventLocation').innerText = localDisplay;
+            document.getElementById('modalEventDesc').innerText = selectedEvent.descricao || "Nenhum detalhe adicional informado.";
 
-            // Anexa a função de exportação ao botão
             document.getElementById('btnAddToCalendar').onclick = () => addToGoogleCalendar(selectedEvent);
 
             openModal('eventDetailsModal');
         }
 
         function addToGoogleCalendar(ev) {
-            // Formatar Data e Hora para o padrão Google (YYYYMMDDTHHmmss)
-            const d = ev.date.replace(/-/g, ''); // 20260315
-            const t = ev.time.replace(':', '') + '00'; // 193000
+            const d = ev.dataInicio.replace(/-/g, ''); 
+            const t = ev.horario.replace(':', '') + '00'; 
             const startStr = `${d}T${t}`;
             
-            // Simula evento de 2 horas
-            const endDate = new Date(new Date(`${ev.date}T${ev.time}:00`).getTime() + (2 * 60 * 60 * 1000));
+            // Calculando hora de término (+ 2 horas)
+            const endDate = new Date(new Date(`${ev.dataInicio}T${ev.horario}:00`).getTime() + (2 * 60 * 60 * 1000));
             const endD = endDate.toISOString().split('T')[0].replace(/-/g, '');
             const endT = endDate.toTimeString().split('T')[1].replace(/:/g, '').substring(0, 6);
             const endStr = `${endD}T${endT}`;
 
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.desc)}&location=${encodeURIComponent(ev.location)}`;
-            
+            const titulo = `${ev.tipo} - ${ev.nivel}`;
+            const local = ev.local || ev.campo;
+
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao)}&location=${encodeURIComponent(local)}`;
             window.open(url, '_blank');
         }
 
-        // Inicializar a renderização ao carregar a página
-        window.addEventListener('DOMContentLoaded', renderAgenda);
-
+        // Inicia carregando os dados da agenda Google
+        window.addEventListener('DOMContentLoaded', carregarAgenda);
     </script>
 </body>
 </html>
