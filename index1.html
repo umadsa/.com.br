@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         tailwind.config = {
@@ -109,6 +110,40 @@
             background-size: 1.5em 1.5em; 
             padding-right: 2.5rem; 
         }
+      /* Ajuste para selects no modal para manter estilo */
+        select.form-input { 
+            appearance: none; 
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d4af37' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); 
+            background-position: right 0.5rem center; 
+            background-repeat: no-repeat; 
+            background-size: 1.5em 1.5em; 
+            padding-right: 2.5rem; 
+        }
+
+        /* Template da Credencial (Fica Oculto na Tela, gerado apenas no PDF) */
+        #credencialTemplate {
+            width: 350px;
+            height: 550px;
+            background-color: #111;
+            border: 2px solid #D4AF37;
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            color: white;
+            box-sizing: border-box;
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .cred-logo { width: 90px; margin-bottom: 20px; }
+        .cred-photo { width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 4px solid #D4AF37; margin-bottom: 25px; box-shadow: 0 0 15px rgba(212,175,55,0.5); }
+        .cred-title { color: #D4AF37; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 5px; }
+        .cred-name { font-size: 26px; font-weight: 900; text-align: center; line-height: 1.2; margin-bottom: 8px; text-transform: uppercase;}
+        .cred-cargo { font-size: 16px; font-weight: 600; color: #E5E7EB; margin-bottom: 20px; text-align: center;}
+        .cred-info { font-size: 12px; text-align: center; color: #9CA3AF; margin-top: auto; border-top: 1px solid #D4AF37; padding-top: 10px; width: 100%;}
     </style>
 </head>
 <body class="bg-dark text-gray-200">
@@ -374,28 +409,81 @@
     <div id="liderSurpresaModal" class="modal-overlay">
         <div class="modal-content border-2 border-gold-500" style="box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);">
             <button onclick="closeModal('liderSurpresaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-gift text-4xl text-gold-500 mb-3"></i>
-                <h3 class="text-2xl font-bold font-serif text-white">Atualização de Liderança</h3>
-                <p class="text-gold-400 text-sm mt-1">Ao finalizar, enviaremos seu material surpresa!</p>
+            <div class="text-center mb-4">
+                <h3 class="text-2xl font-bold font-serif text-white">Cadastro Oficial de Líderes</h3>
+                <p class="text-gold-400 text-xs mt-1">Gere sua credencial exclusiva da Liderança UMADSA.</p>
             </div>
-            <form onsubmit="simularEnvio(event, 'liderSurpresaModal')">
+            <form id="formLider" onsubmit="enviarLider(event)">
                 <div class="space-y-3 text-sm">
-                    <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Nome do Líder">
-                    <div class="grid grid-cols-2 gap-3">
-                        <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 form-input">
-                            <option value="">Cargo...</option>
-                            <option>Líder de Campo</option>
-                            <option>Líder de Congregação</option>
-                            <option>Vice-Líder</option>
-                        </select>
-                        <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Setor/Congregação">
+                    
+                    <div class="text-center">
+                        <label class="cursor-pointer inline-block border-2 border-dashed border-gray-700 rounded-lg p-4 bg-black hover:border-gold-500 transition w-full">
+                            <i class="fa-solid fa-camera text-2xl text-gold-500 mb-1"></i>
+                            <p class="text-[10px] text-gray-400">Tirar/Anexar Foto 3x4</p>
+                            <input type="file" id="liderFoto" accept="image/*" required class="hidden" onchange="previewFotoLider(event)">
+                        </label>
+                        <img id="liderFotoPreview" class="hidden mx-auto w-24 h-24 object-cover rounded-full mt-2 border-2 border-gold-500">
                     </div>
-                    <input type="email" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="E-mail (Para receber o material)">
+
+                    <input type="text" id="liderNome" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Nome Completo">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="date" id="liderNasc" required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none" title="Data de Nascimento">
+                        <input type="tel" id="liderTel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="WhatsApp" onkeyup="mascaraTelefone(event)">
+                    </div>
+
+                    <input type="email" id="liderEmail" class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="E-mail (Opcional - Para receber a carteirinha)">
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="liderCampo" required onchange="loadCongregacoesDropdown('liderCampo', 'liderCongregacao')" class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
+                            <option value="" disabled selected>Campo...</option>
+                        </select>
+                        <select id="liderCongregacao" required disabled class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
+                            <option value="" disabled selected>Congregação...</option>
+                        </select>
+                    </div>
+
+                    <select id="liderCargo" required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
+                        <option value="" disabled selected>Selecione seu Cargo...</option>
+                        <option value="Líder de Campo">Líder de Campo</option>
+                        <option value="Líder de Congregação">Líder de Congregação</option>
+                        <option value="Regente">Regente</option>
+                    </select>
+
                 </div>
-                <button type="submit" class="w-full mt-6 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition uppercase tracking-wide">Finalizar e Receber Presente</button>
+                <button type="submit" id="btnLiderSubmit" class="w-full mt-4 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition uppercase tracking-wide">Finalizar Cadastro</button>
             </form>
         </div>
+    </div>
+
+    <div id="successLiderModal" class="modal-overlay">
+        <div class="modal-content border-t-4 border-gold-500 text-center">
+            <button onclick="closeModal('successLiderModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <i class="fa-solid fa-medal text-5xl text-gold-500 mb-4"></i>
+            <h3 class="text-2xl font-serif font-bold text-white mb-2" id="msgLiderNome">Glória a Deus!</h3>
+            <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+                Você é uma peça fundamental no Reino de Deus. O seu chamado é para forjar uma geração de excelência e liderar com propósito.
+            </p>
+            <p class="text-gold-400 italic font-serif text-sm mb-6 pb-6 border-b border-gray-800">
+                "Não me escolhestes vós a mim, mas eu vos escolhi a vós, e vos nomeei, para que vades e deis fruto..." <br>- João 15:16
+            </p>
+            
+            <p class="text-xs text-gray-400 mb-4 font-bold uppercase tracking-widest">Fique Atento às novidades exclusivas em nossas redes sociais e no Grupo Oficial!</p>
+
+            <button onclick="gerarPDFCredencial()" class="w-full bg-white text-black font-black py-4 rounded-lg hover:bg-gray-200 transition flex items-center justify-center gap-2 uppercase tracking-wide">
+                <i class="fa-solid fa-download"></i> Baixar Credencial (PDF)
+            </button>
+        </div>
+    </div>
+
+    <div id="credencialTemplate">
+        <span class="cred-title">UMADSA MINISTERIAL</span>
+        <img src="https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png" class="cred-logo">
+        <img src="" id="credFotoResult" class="cred-photo">
+        <div class="cred-name" id="credNomeResult">NOME DO LÍDER</div>
+        <div class="cred-cargo" id="credCargoResult">Cargo | Campo</div>
+        <div class="cred-info">CREDENCIAL OFICIAL DE LIDERANÇA<br>Válida para o ano de 2026</div>
     </div>
 
     <div id="eventDetailsModal" class="modal-overlay">
@@ -450,8 +538,8 @@
         // 1. API DA AGENDA E HIERARQUIA
         const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec"; 
         
-        // 2. NOVA API DA CAPELANIA
-        const API_CAPELANIA = "https://script.google.com/macros/s/AKfycbwj7piuiqToBuYjzKob73dEjFeUZ23Ny7zGh_glOxpTdCkHWsvMD9NgWBb296-K-JUZ/exec";
+        // 2. NOVA API DA CAPELANIA E CADASTROS
+        const API_CADASTROS = "https://script.google.com/macros/s/AKfycbwj7piuiqToBuYjzKob73dEjFeUZ23Ny7zGh_glOxpTdCkHWsvMD9NgWBb296-K-JUZ/exec";
         
         // TOKEN OFUSCADO EM BASE64 (Segurança para o envio)
         // O valor real é: 'umadsa2026tokendeseguranca'
@@ -502,7 +590,7 @@
             };
 
             try {
-                const response = await fetch(API_CAPELANIA, {
+                const response = await fetch(API_CADASTROS, {
                     method: 'POST',
                     redirect: 'follow',
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -544,7 +632,10 @@
         // ==========================================
         // BUSCAR E POPULAR DROPDOWNS DE CAPELANIA
         // ==========================================
-        async function fetchHierarquiaCapelania() {
+        // ==========================================
+        // BUSCAR E POPULAR DROPDOWNS (CAPELANIA E LÍDERES)
+        // ==========================================
+        async function fetchHierarquia() {
             try {
                 // Utiliza a API da Agenda que já tem a função get_hierarquia
                 const res = await fetch(GOOGLE_API_URL, {
@@ -557,15 +648,21 @@
                 
                 if (data.result === 'success') {
                     dbHierarquia = data.hierarquia;
-                    loadCamposCapelania();
+                    // Carrega os campos para os dois formulários
+                    loadCamposGlobais('capelaniaCampo');
+                    loadCamposGlobais('liderCampo');
+                } else {
+                    console.error("Erro ao buscar a hierarquia:", data.message);
                 }
             } catch (err) {
-                console.error("Erro ao buscar a hierarquia:", err);
+                console.error("Falha de rede ao buscar a hierarquia:", err);
             }
         }
 
-        function loadCamposCapelania() {
-            const selectCampo = document.getElementById('capelaniaCampo');
+        function loadCamposGlobais(selectId) {
+            const selectCampo = document.getElementById(selectId);
+            if (!selectCampo) return; // Evita erro se o modal não existir
+            
             selectCampo.innerHTML = '<option value="" disabled selected>Selecione o Campo...</option>';
             
             // Reúne todos os campos de todas as regionais
@@ -582,9 +679,9 @@
             });
         }
 
-        function loadCongregacoesCapelania() {
-            const campoSelecionado = document.getElementById('capelaniaCampo').value;
-            const selectCong = document.getElementById('capelaniaCongregacao');
+        function loadCongregacoesDropdown(campoSelectId, congSelectId) {
+            const campoSelecionado = document.getElementById(campoSelectId).value;
+            const selectCong = document.getElementById(congSelectId);
             
             selectCong.innerHTML = '<option value="" disabled selected>Selecione a Congregação...</option>';
             
@@ -609,7 +706,94 @@
                 selectCong.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
+        // ==========================================
+        // CADASTRO LÍDER & CREDENCIAL PDF
+        // ==========================================
+        let fotoLiderBase64 = "";
 
+        function previewFotoLider(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fotoLiderBase64 = e.target.result;
+                    const preview = document.getElementById('liderFotoPreview');
+                    preview.src = fotoLiderBase64;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function enviarLider(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnLiderSubmit');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...';
+            btn.disabled = true;
+
+            const nome = document.getElementById('liderNome').value;
+            const cargo = document.getElementById('liderCargo').value;
+            const campo = document.getElementById('liderCampo').value;
+
+            const payload = {
+                authToken: atob(_k),
+                action: "cadastroLider",
+                nome: nome,
+                nascimento: document.getElementById('liderNasc').value,
+                telefone: document.getElementById('liderTel').value,
+                email: document.getElementById('liderEmail').value,
+                campo: document.getElementById('liderCampo').value,
+                congregacao: document.getElementById('liderCongregacao').value,
+                cargo: cargo
+            };
+
+            try {
+                const response = await fetch(API_CADASTROS, { 
+                    method: 'POST', 
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload) 
+                });
+                const resData = await response.json();
+                
+                if (resData.status === 'success') {
+                    // Prepara os dados para o PDF
+                    document.getElementById('msgLiderNome').innerText = `Obrigado, ${nome.split(' ')[0]}!`;
+                    document.getElementById('credNomeResult').innerText = nome;
+                    document.getElementById('credCargoResult').innerText = `${cargo} | ${campo}`;
+                    document.getElementById('credFotoResult').src = fotoLiderBase64;
+
+                    closeModal('liderSurpresaModal');
+                    document.getElementById('formLider').reset();
+                    document.getElementById('liderFotoPreview').classList.add('hidden');
+                    
+                    openModal('successLiderModal');
+                } else alert("Erro: " + (resData.message || "Erro desconhecido."));
+            } catch (error) { alert("Erro de conexão."); } 
+            finally { btn.innerHTML = originalText; btn.disabled = false; }
+        }
+
+        function gerarPDFCredencial() {
+            const element = document.getElementById('credencialTemplate');
+            const opt = {
+                margin: 0,
+                filename: 'Credencial_UMADSA_2026.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: [90, 140], orientation: 'portrait' } 
+            };
+
+            // Remove o esconderijo temporariamente para o gerador ler o HTML
+            element.style.left = "0";
+            element.style.top = "0";
+            element.style.zIndex = "-1"; 
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Esconde novamente
+                element.style.left = "-9999px";
+            });
+        }
         // ==========================================
         // FUNÇÕES SIMULADAS (PARA OS OUTROS MODAIS)
         // ==========================================
@@ -820,7 +1004,7 @@
         // Init Geral
         window.addEventListener('DOMContentLoaded', () => {
             carregarAgenda();
-            fetchHierarquiaCapelania(); // Busca os campos para o modal de capelania
+            fetchHierarquia(); // Carrega os dados para ambos os modais
         });
     </script>
 </body>
