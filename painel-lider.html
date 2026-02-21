@@ -6,9 +6,7 @@
     <title>Portal do Líder | UMADSA Ministerial</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
@@ -301,29 +299,24 @@
 
     <script>
         // --- DADOS SIMULADOS ---
-        // Usuário Logado (Regional)
         const loggedUser = {
             nome: "Pr. Marcos Oliveira",
             regional: "Regional 3",
             perfil: "Líder Regional"
         };
 
-        // Banco de Eventos (Mock)
         let eventsDB = [
             { id: 1, dataInicio: "2026-03-15", tipo: "Congresso", nivel: "Ministerial Regional", campo: "Sede Santo André", regional: "Regional 1", status: "Confirmado" },
             { id: 2, dataInicio: "2026-03-28", tipo: "Treinamento", nivel: "Campo", campo: "Campo Diadema", regional: "Regional 2", status: "Confirmado" },
             { id: 3, dataInicio: "2026-04-10", tipo: "Festividade", nivel: "Congregação", campo: "Campo Mauá", regional: "Regional 3", congregacao: "Cong. Betel", status: "Confirmado" }
         ];
 
-        let conflictIgnored = false; // Flag para permitir forçar o salvamento após o aviso
+        let conflictIgnored = false; 
 
         // --- INICIALIZAÇÃO ---
         window.onload = () => {
-            // Setup User UI
             document.getElementById('userNameDisplay').innerText = loggedUser.nome;
             document.getElementById('userRegionalDisplay').innerText = loggedUser.regional;
-            
-            // Preenche o input readonly da Regional no form
             document.getElementById('evRegional').value = loggedUser.regional;
 
             renderTable();
@@ -356,7 +349,6 @@
             
             tbody.innerHTML = '';
             
-            // Ordena por data mais recente e filtra
             const filtered = eventsDB
                 .sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio))
                 .filter(ev => 
@@ -405,7 +397,6 @@
         function updateKPIs() {
             document.getElementById('kpiTotal').innerText = eventsDB.length;
             
-            // Eventos do mês atual (mock simples considerando mês corrente = março/2026 para os testes)
             const currentMonth = 3; 
             const mesCount = eventsDB.filter(e => parseInt(e.dataInicio.split('-')[1]) === currentMonth).length;
             document.getElementById('kpiMes').innerText = mesCount;
@@ -417,7 +408,7 @@
         // --- LÓGICA DO FORMULÁRIO (MODAL) ---
         function openEventModal() {
             document.getElementById('formEvent').reset();
-            document.getElementById('evRegional').value = loggedUser.regional; // Repõe o readonly
+            document.getElementById('evRegional').value = loggedUser.regional; 
             toggleCongregacao();
             toggleMultiDay();
             limparConflito();
@@ -463,7 +454,7 @@
             }
         }
 
-        [span_2](start_span)// BUSCA DE CEP (Integração ViaCEP) - conforme instrução[span_2](end_span)
+        // BUSCA DE CEP (Integração ViaCEP)
         async function buscarCEP() {
             const cepInput = document.getElementById('evCep');
             let cep = cepInput.value.replace(/\D/g, '');
@@ -499,55 +490,96 @@
             btn.classList.add('bg-amber-500', 'hover:bg-amber-600', 'text-black');
             conflictIgnored = false;
         }
-
-        function salvarEvento(e) {
+        
+        const GOOGLE_CALENDAR_API = 'https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec';
+        
+        async function salvarEvento(e) {
             e.preventDefault();
 
             const dataInicio = document.getElementById('evDataInicio').value;
             const tipo = document.getElementById('evTipo').value;
             
-            [span_3](start_span)// Verifica conflito de datas[span_3](end_span) (lógica de checagem)
             if (!conflictIgnored) {
                 const conflito = eventsDB.find(ev => ev.dataInicio === dataInicio);
                 if (conflito) {
-                    // Exibe o alerta no form
                     document.getElementById('conflictAlert').classList.remove('hidden');
                     document.getElementById('conflictAlert').classList.add('fade-in');
                     document.getElementById('conflictEventName').innerText = `${conflito.tipo} (${conflito.nivel} - ${conflito.regional})`;
                     
-                    // Altera o botão para confirmar
                     const btn = document.getElementById('btnSubmitForm');
                     btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Estou Ciente, Lançar Mesmo Assim`;
                     btn.classList.remove('bg-amber-500', 'hover:bg-amber-600', 'text-black');
                     btn.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
                     
-                    conflictIgnored = true; // Na próxima vez que clicar, ele passa
-                    return; // Para a execução aqui aguardando o clique do botão modificado
+                    conflictIgnored = true; 
+                    return; 
                 }
             }
 
-            // Cria o objeto para salvar
-            const novoEvento = {
-                id: Date.now(),
-                dataInicio: dataInicio,
+            const btn = document.getElementById('btnSubmitForm');
+            const originalBtnHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando com Google Agenda...`;
+            btn.disabled = true;
+
+            const bannerInput = document.getElementById('evBanner').files[0];
+            const bannerLinkMock = bannerInput ? `https://seusite.com.br/uploads/${bannerInput.name}` : "";
+
+            const payload = {
                 tipo: tipo,
                 nivel: document.getElementById('evNivel').value,
                 campo: document.getElementById('evCampo').value,
-                regional: loggedUser.regional,
                 congregacao: document.getElementById('evCongregacao').value,
-                status: "Confirmado"
+                regional: loggedUser.regional,
+                dataInicio: dataInicio,
+                horario: document.getElementById('evHorario').value,
+                isMultiDay: document.getElementById('evMultiDay').checked,
+                dataTermino: document.getElementById('evDataTermino').value,
+                rua: document.getElementById('evRua').value,
+                numero: document.getElementById('evNum').value,
+                bairro: document.getElementById('evBairro').value,
+                cidade: document.getElementById('evCidade').value,
+                uf: document.getElementById('evUF').value,
+                cep: document.getElementById('evCep').value,
+                bannerLink: bannerLinkMock
             };
 
-            // Simula salvamento
-            eventsDB.push(novoEvento);
-            
-            alert("Evento cadastrado com sucesso na agenda oficial!");
-            
-            closeEventModal();
-            renderTable();
-            updateKPIs();
-        }
+            try {
+                const response = await fetch(GOOGLE_CALENDAR_API, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
 
+                if (data.result === 'success') {
+                    eventsDB.push({
+                        id: data.eventId, 
+                        dataInicio: payload.dataInicio,
+                        tipo: payload.tipo,
+                        nivel: payload.nivel,
+                        campo: payload.campo,
+                        regional: payload.regional,
+                        congregacao: payload.congregacao,
+                        status: "Sincronizado"
+                    });
+                    
+                    alert("Sucesso! Evento criado e sincronizado com o Google Agenda oficial.");
+                    closeEventModal();
+                    renderTable();
+                    updateKPIs();
+                } else {
+                    alert("Erro ao criar na agenda: " + data.message);
+                }
+
+            } catch (error) {
+                alert("Erro de conexão com a API do Google Calendar.");
+                console.error(error);
+            } finally {
+                btn.innerHTML = originalBtnHTML;
+                btn.disabled = false;
+                limparConflito();
+            }
+        }
     </script>
 </body>
 </html>
