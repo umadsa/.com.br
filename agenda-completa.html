@@ -27,7 +27,7 @@
     </script>
 
     <style>
-        body { background-color: #f8fafc; color: #18181b; } /* bg-slate-50 */
+        body { background-color: #f8fafc; color: #18181b; } 
         
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 100; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
         .modal-content { background: #171717; border: 1px solid #D4AF37; padding: 2rem; border-radius: 0.5rem; width: 100%; max-width: 500px; color: white; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease-out; }
@@ -61,17 +61,21 @@
             </div>
             
             <div class="relative w-full md:w-72">
-                <input type="text" id="searchInput" onkeyup="filterEvents()" placeholder="Buscar evento ou local..." class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500">
+                <input type="text" id="searchInput" onkeyup="filterEvents()" placeholder="Procurar evento ou local..." class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
             </div>
         </div>
 
         <div id="fullAgendaList" class="space-y-4">
+            <div class="text-center py-20 text-gray-500">
+                <i class="fa-solid fa-spinner fa-spin text-4xl text-gold-500 mb-4"></i>
+                <p class="font-bold">A carregar o cronograma completo...</p>
             </div>
+        </div>
         
         <div id="noResults" class="hidden text-center py-20">
             <i class="fa-regular fa-calendar-xmark text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500 font-medium">Nenhum evento encontrado para esta busca.</p>
+            <p class="text-gray-500 font-medium">Nenhum evento encontrado para esta pesquisa.</p>
         </div>
     </main>
 
@@ -108,7 +112,7 @@
                 </div>
                 <div class="pt-4 mt-4 border-t border-gray-800">
                     <p class="text-gray-400 text-xs uppercase font-bold mb-2">Sobre o Evento</p>
-                    <p class="text-gray-300 leading-relaxed" id="modalEventDesc">Descrição completa aqui.</p>
+                    <p class="text-gray-300 leading-relaxed whitespace-pre-wrap" id="modalEventDesc">Descrição completa aqui.</p>
                 </div>
             </div>
 
@@ -119,19 +123,33 @@
     </div>
 
     <script>
-        // O mesmo banco de dados simulado do Index
-        const mockAgendaData = [
-            { id: 1, title: "Reunião Geral de Liderança", date: "2026-03-15", time: "19:30", location: "Templo Sede (Santo André)", nivel: "Ministerial Regional", desc: "Convocação para todos os líderes de campo e congregação. Traje: Oficial da liderança UMADSA." },
-            { id: 2, title: "Treinamento de Capelania", date: "2026-03-28", time: "14:00", location: "Congregação Central", nivel: "Campo", desc: "Módulo 1 para novos candidatos aprovados no alistamento. Trazer material de anotação." },
-            { id: 3, title: "Consagração UMADSA Jovem", date: "2026-04-04", time: "08:00", location: "Polos Regionais", nivel: "Congregação", desc: "Buscando revestimento e direcionamento espiritual para o próximo trimestre." },
-            { id: 4, title: "Culto de Verão Jovem", date: "2026-04-11", time: "19:00", location: "Sede Santo André", nivel: "Ministerial Regional", desc: "Noite de louvor, adoração e comunhão com a juventude de toda a região." },
-            { id: 5, title: "Congresso de Missões", date: "2026-05-15", time: "18:00", location: "Templo Sede", nivel: "Geral", desc: "Abertura oficial do congresso anual focado no trabalho missionário urbano." },
-            { id: 6, title: "Mentoria Online para Líderes", date: "2026-06-02", time: "20:00", location: "Online (Google Meet)", nivel: "Liderança", desc: "Reunião de alinhamento com a presidência ministerial." },
-            { id: 7, title: "Vigília Jovem", date: "2026-06-20", time: "23:00", location: "Congregação Betel", nivel: "Campo", desc: "Uma noite inteira na presença de Deus, com louvor e intercessão." },
-            { id: 8, title: "Ação Social na Comunidade", date: "2026-07-10", time: "09:00", location: "Praça Central", nivel: "Ministerial Regional", desc: "Distribuição de alimentos, corte de cabelo e evangelismo de rua." },
-            { id: 9, title: "Seminário Teológico", date: "2026-08-05", time: "14:00", location: "Auditório Principal", nivel: "Ministerial Regional", desc: "Estudo aprofundado sobre Escatologia e o papel do jovem no fim dos tempos." },
-            { id: 10, title: "Acampamento UMADSA", date: "2026-10-10", time: "08:00", location: "Sítio Recanto Feliz", nivel: "Geral", desc: "Retiro espiritual de 3 dias para desconectar do mundo e conectar com Deus." }
-        ];
+        // 👉 COLE A SUA URL DO GOOGLE APPS SCRIPT AQUI 👈
+        const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec"; 
+
+        let fullAgendaData = [];
+
+        async function fetchFullAgenda() {
+            try {
+                const res = await fetch(GOOGLE_API_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'read' })
+                });
+                
+                const data = await res.json();
+                
+                if(data.result === 'success') {
+                    // Ordena por data mais recente
+                    fullAgendaData = data.events.sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+                    renderFullAgenda(fullAgendaData);
+                } else {
+                    document.getElementById('fullAgendaList').innerHTML = `<p class="text-center text-red-500 py-10 font-bold">Erro ao carregar: ${data.message}</p>`;
+                }
+            } catch(e) {
+                document.getElementById('fullAgendaList').innerHTML = `<p class="text-center text-red-500 py-10 font-bold">Falha de conexão.</p>`;
+            }
+        }
 
         function renderFullAgenda(eventsToRender) {
             const list = document.getElementById('fullAgendaList');
@@ -146,12 +164,15 @@
             noResults.classList.add('hidden');
 
             eventsToRender.forEach(ev => {
-                const dateObj = new Date(ev.date + "T00:00:00");
+                const dateObj = new Date(ev.dataInicio + "T00:00:00");
                 const day = String(dateObj.getDate()).padStart(2, '0');
                 const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
 
+                const tituloDisplay = ev.tipo;
+                const localDisplay = ev.local ? ev.local : (ev.campo || ev.regional);
+
                 const row = `
-                    <div class="event-row bg-white border border-gray-200 border-l-4 border-l-gray-300 rounded-lg p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer" onclick="openEventDetails(${ev.id})">
+                    <div class="event-row bg-white border border-gray-200 border-l-4 border-l-gray-300 rounded-lg p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer" onclick="openEventDetails('${ev.id}')">
                         
                         <div class="flex items-center gap-4 md:gap-6">
                             <div class="bg-gray-50 border border-gray-100 rounded-lg p-3 text-center min-w-[70px] shrink-0">
@@ -161,8 +182,8 @@
                             
                             <div>
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-gold-600 bg-gold-400/10 px-2 py-0.5 rounded">${ev.nivel}</span>
-                                <h3 class="text-lg font-bold text-black mt-1 leading-tight">${ev.title}</h3>
-                                <p class="text-gray-500 text-sm mt-1"><i class="fa-regular fa-clock mr-1"></i> ${ev.time} <span class="mx-2 text-gray-300">|</span> <i class="fa-solid fa-location-dot mr-1"></i> ${ev.location}</p>
+                                <h3 class="text-lg font-bold text-black mt-1 leading-tight">${tituloDisplay}</h3>
+                                <p class="text-gray-500 text-sm mt-1 truncate max-w-[280px] md:max-w-md"><i class="fa-regular fa-clock mr-1"></i> ${ev.horario} <span class="mx-2 text-gray-300">|</span> <i class="fa-solid fa-location-dot mr-1"></i> ${localDisplay}</p>
                             </div>
                         </div>
 
@@ -179,14 +200,14 @@
 
         function filterEvents() {
             const term = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = mockAgendaData.filter(ev => 
-                ev.title.toLowerCase().includes(term) || 
-                ev.location.toLowerCase().includes(term)
+            const filtered = fullAgendaData.filter(ev => 
+                ev.tipo.toLowerCase().includes(term) || 
+                (ev.local && ev.local.toLowerCase().includes(term)) ||
+                (ev.campo && ev.campo.toLowerCase().includes(term))
             );
             renderFullAgenda(filtered);
         }
 
-        // Funções do Modal
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) event.target.style.display = "none"; }
@@ -194,17 +215,19 @@
         let selectedEvent = null;
 
         function openEventDetails(id) {
-            selectedEvent = mockAgendaData.find(e => e.id === id);
+            selectedEvent = fullAgendaData.find(e => e.id === id);
             if(!selectedEvent) return;
 
-            const dateObj = new Date(selectedEvent.date + "T00:00:00");
+            const dateObj = new Date(selectedEvent.dataInicio + "T00:00:00");
             const dateStr = dateObj.toLocaleDateString('pt-BR');
 
+            const localDisplay = selectedEvent.local ? selectedEvent.local : `${selectedEvent.campo} (${selectedEvent.regional})`;
+
             document.getElementById('modalEventNivel').innerText = selectedEvent.nivel;
-            document.getElementById('modalEventTitle').innerText = selectedEvent.title;
-            document.getElementById('modalEventDateTime').innerText = `${dateStr} às ${selectedEvent.time}h`;
-            document.getElementById('modalEventLocation').innerText = selectedEvent.location;
-            document.getElementById('modalEventDesc').innerText = selectedEvent.desc;
+            document.getElementById('modalEventTitle').innerText = selectedEvent.tipo;
+            document.getElementById('modalEventDateTime').innerText = `${dateStr} às ${selectedEvent.horario}h`;
+            document.getElementById('modalEventLocation').innerText = localDisplay;
+            document.getElementById('modalEventDesc').innerText = selectedEvent.descricao || "Nenhum detalhe adicional informado.";
 
             document.getElementById('btnAddToCalendar').onclick = () => addToGoogleCalendar(selectedEvent);
 
@@ -212,22 +235,24 @@
         }
 
         function addToGoogleCalendar(ev) {
-            const d = ev.date.replace(/-/g, ''); 
-            const t = ev.time.replace(':', '') + '00'; 
+            const d = ev.dataInicio.replace(/-/g, ''); 
+            const t = ev.horario.replace(':', '') + '00'; 
             const startStr = `${d}T${t}`;
             
-            const endDate = new Date(new Date(`${ev.date}T${ev.time}:00`).getTime() + (2 * 60 * 60 * 1000));
+            const endDate = new Date(new Date(`${ev.dataInicio}T${ev.horario}:00`).getTime() + (2 * 60 * 60 * 1000));
             const endD = endDate.toISOString().split('T')[0].replace(/-/g, '');
             const endT = endDate.toTimeString().split('T')[1].replace(/:/g, '').substring(0, 6);
             const endStr = `${endD}T${endT}`;
 
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.desc)}&location=${encodeURIComponent(ev.location)}`;
+            const titulo = `${ev.tipo} - ${ev.nivel}`;
+            const local = ev.local || ev.campo;
+
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao)}&location=${encodeURIComponent(local)}`;
             window.open(url, '_blank');
         }
 
         // Init
-        window.addEventListener('DOMContentLoaded', () => renderFullAgenda(mockAgendaData));
-
+        window.addEventListener('DOMContentLoaded', fetchFullAgenda);
     </script>
 </body>
 </html>
