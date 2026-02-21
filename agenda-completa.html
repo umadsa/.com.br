@@ -36,7 +36,6 @@
         .event-row { transition: all 0.2s ease; }
         .event-row:hover { border-left-color: #D4AF37; background-color: #fff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
 
-        /* Estilo para os selects de filtro */
         select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
     </style>
 </head>
@@ -50,7 +49,7 @@
                     <h1 class="text-base md:text-xl font-bold text-white leading-tight">UMADSA <span class="text-gold-500">AGENDA</span></h1>
                 </div>
             </div>
-            <a href="index1.html" class="text-gray-400 hover:text-gold-500 text-[10px] md:text-sm font-bold uppercase tracking-widest transition">
+            <a href="index.html" class="text-gray-400 hover:text-gold-500 text-[10px] md:text-sm font-bold uppercase tracking-widest transition">
                 <i class="fa-solid fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Voltar ao Site</span>
             </a>
         </div>
@@ -66,23 +65,13 @@
             <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
                 <select id="filterMonth" onchange="filterEvents()" class="w-full md:w-40 pl-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 text-gray-700">
                     <option value="">Qualquer Mês</option>
-                    <option value="01">Janeiro</option>
-                    <option value="02">Fevereiro</option>
-                    <option value="03">Março</option>
-                    <option value="04">Abril</option>
-                    <option value="05">Maio</option>
-                    <option value="06">Junho</option>
-                    <option value="07">Julho</option>
-                    <option value="08">Agosto</option>
-                    <option value="09">Setembro</option>
-                    <option value="10">Outubro</option>
-                    <option value="11">Novembro</option>
-                    <option value="12">Dezembro</option>
+                    <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option><option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option><option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                 </select>
 
                 <select id="filterLevel" onchange="filterEvents()" class="w-full md:w-48 pl-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 text-gray-700">
                     <option value="">Qualquer Nível</option>
-                    <option value="Ministerial Regional">Ministerial Regional</option>
+                    <option value="Ministerial">Ministerial</option>
+                    <option value="Regional">Regional</option>
                     <option value="Campo">Campo</option>
                     <option value="Congregação">Congregação</option>
                     <option value="Geral">Geral</option>
@@ -152,7 +141,6 @@
     </div>
 
     <script>
-        // 👉 COLE A SUA URL DO GOOGLE APPS SCRIPT AQUI 👈
         const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec"; 
 
         let fullAgendaData = [];
@@ -169,7 +157,6 @@
                 const data = await res.json();
                 
                 if(data.result === 'success') {
-                    // Filtra apenas eventos de hoje em diante
                     const hoje = new Date();
                     hoje.setHours(0,0,0,0);
                     
@@ -203,32 +190,23 @@
                 const day = String(dateObj.getDate()).padStart(2, '0');
                 const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
 
-                const tituloDisplay = ev.tipo;
-                
-                // Formatar Local com Campo e Congregação
                 let hierarquiaLocal = ev.campo || ev.regional;
-                if (ev.congregacao) {
-                    hierarquiaLocal += ` - ${ev.congregacao}`;
-                }
+                if (ev.congregacao) hierarquiaLocal += ` - ${ev.congregacao}`;
                 const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
 
-                // CORREÇÃO: Adicionadas classes "flex-1 min-w-0" e "truncate" para evitar esticar no mobile
                 const row = `
                     <div class="group event-row bg-white border border-gray-200 border-l-4 border-l-gray-300 rounded-lg p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer" onclick="openEventDetails('${ev.id}')">
-                        
                         <div class="flex items-center gap-4 md:gap-6 flex-1 min-w-0">
                             <div class="bg-gray-50 border border-gray-100 rounded-lg p-3 text-center min-w-[70px] shrink-0">
                                 <span class="block text-xs font-bold text-gray-400 uppercase leading-none mb-1">${month}</span>
                                 <span class="block text-2xl font-black text-black leading-none">${day}</span>
                             </div>
-                            
                             <div class="flex-1 min-w-0">
                                 <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-gold-600 bg-gold-400/10 px-2 py-0.5 rounded mb-1 truncate max-w-full">${ev.nivel}</span>
-                                <h3 class="text-lg font-bold text-black leading-tight truncate">${tituloDisplay}</h3>
+                                <h3 class="text-lg font-bold text-black leading-tight truncate">${ev.tipo}</h3>
                                 <p class="text-gray-500 text-sm mt-1 truncate w-full" title="${localDisplay}"><i class="fa-regular fa-clock mr-1"></i> ${ev.horario} <span class="mx-2 text-gray-300">|</span> <i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                             </div>
                         </div>
-
                         <div class="hidden md:flex shrink-0 items-center justify-center">
                             <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-gold-50 group-hover:text-gold-600 transition">
                                 <i class="fa-solid fa-chevron-right"></i>
@@ -240,24 +218,19 @@
             });
         }
 
-        // Função de filtro com Pesquisa de Texto, Mês e Nível
         function filterEvents() {
             const term = document.getElementById('searchInput').value.toLowerCase();
             const selectedMonth = document.getElementById('filterMonth').value;
             const selectedLevel = document.getElementById('filterLevel').value;
 
             const filtered = fullAgendaData.filter(ev => {
-                // Filtro de Texto (Título, Local, Campo ou Congregação)
                 const matchTerm = ev.tipo.toLowerCase().includes(term) || 
                                   (ev.local && ev.local.toLowerCase().includes(term)) ||
                                   (ev.campo && ev.campo.toLowerCase().includes(term)) ||
                                   (ev.congregacao && ev.congregacao.toLowerCase().includes(term));
                 
-                // Filtro de Mês (Extraído da data YYYY-MM-DD)
                 const evMonth = ev.dataInicio.split('-')[1];
                 const matchMonth = selectedMonth === "" || evMonth === selectedMonth;
-
-                // Filtro de Nível
                 const matchLevel = selectedLevel === "" || ev.nivel === selectedLevel;
 
                 return matchTerm && matchMonth && matchLevel;
@@ -279,11 +252,8 @@
             const dateObj = new Date(selectedEvent.dataInicio + "T00:00:00");
             const dateStr = dateObj.toLocaleDateString('pt-BR');
 
-            // Formatar Local no Modal
             let hierarquiaModal = selectedEvent.campo || "Geral";
-            if (selectedEvent.congregacao) {
-                hierarquiaModal += ` - ${selectedEvent.congregacao}`;
-            }
+            if (selectedEvent.congregacao) hierarquiaModal += ` - ${selectedEvent.congregacao}`;
             hierarquiaModal += ` (${selectedEvent.regional})`;
 
             const localDisplay = selectedEvent.local ? `${hierarquiaModal} | Endereço: ${selectedEvent.local}` : hierarquiaModal;
@@ -300,14 +270,22 @@
         }
 
         function addToGoogleCalendar(ev) {
-            // CORREÇÃO: Pega hora e data e constrói o formato exato ignorando o fuso universal (UTC)
             const [ano, mes, dia] = ev.dataInicio.split('-');
             const [hora, min] = ev.horario.split(':');
             
             const startDate = new Date(ano, mes - 1, dia, hora, min);
-            const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // +2 horas
+            
+            // CORREÇÃO: Verificar se existe dataTermino. Se não, assume 2 horas depois.
+            let endDate;
+            if (ev.dataTermino) {
+                const [tAno, tMes, tDia] = ev.dataTermino.split('-');
+                // Se a planilha não fornecer hora de término, usamos a hora de início + 2h para garantir o bloco no calendário
+                endDate = new Date(tAno, tMes - 1, tDia, hora, min);
+                endDate.setHours(endDate.getHours() + 2);
+            } else {
+                endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000));
+            }
 
-            // Formata para YYYYMMDDTHHmmss no horário local (Evita erro de fuso)
             const formatGCal = (date) => {
                 const pad = (n) => String(n).padStart(2, '0');
                 return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
@@ -316,26 +294,17 @@
             const startStr = formatGCal(startDate);
             const endStr = formatGCal(endDate);
 
-            // Título detalhado para a Agenda
             let titulo = `${ev.tipo} | ${ev.nivel} | ${ev.campo || ev.regional}`;
-            if (ev.congregacao) {
-                titulo += ` - ${ev.congregacao}`;
-            }
+            if (ev.congregacao) titulo += ` - ${ev.congregacao}`;
 
-            // Local detalhado para a Agenda (Maps)
             let local = ev.campo || ev.regional;
-            if (ev.congregacao) {
-                local += ` - ${ev.congregacao}`;
-            }
-            if (ev.local) {
-                local += `, ${ev.local}`;
-            }
+            if (ev.congregacao) local += ` - ${ev.congregacao}`;
+            if (ev.local) local += `, ${ev.local}`;
 
             const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao || "")}&location=${encodeURIComponent(local)}`;
             window.open(url, '_blank');
         }
 
-        // Init
         window.addEventListener('DOMContentLoaded', fetchFullAgenda);
     </script>
 </body>
