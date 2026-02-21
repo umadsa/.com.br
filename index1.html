@@ -60,7 +60,7 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9);
-            z-index: 60;
+            z-index: 50;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -120,30 +120,58 @@
             padding-right: 2.5rem; 
         }
 
-        /* Template da Credencial (Fica Oculto na Tela, gerado apenas no PDF) */
-        #credencialTemplate {
-            width: 350px;
-            height: 550px;
-            background-color: #111;
-            border: 2px solid #D4AF37;
+        /* ==========================================
+           TEMPLATE CREDENCIAL PDF (Oculto na Tela) 
+           ========================================== */
+        #credencialContainer {
             position: absolute;
-            left: -9999px;
-            top: -9999px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 20px;
-            color: white;
-            box-sizing: border-box;
-            border-radius: 12px;
-            font-family: 'Montserrat', sans-serif;
+            top: 0; left: 0;
+            opacity: 0; pointer-events: none; z-index: -100;
         }
-        .cred-logo { width: 90px; margin-bottom: 20px; }
-        .cred-photo { width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 4px solid #D4AF37; margin-bottom: 25px; box-shadow: 0 0 15px rgba(212,175,55,0.5); }
-        .cred-title { color: #D4AF37; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 5px; }
-        .cred-name { font-size: 26px; font-weight: 900; text-align: center; line-height: 1.2; margin-bottom: 8px; text-transform: uppercase;}
-        .cred-cargo { font-size: 16px; font-weight: 600; color: #E5E7EB; margin-bottom: 20px; text-align: center;}
-        .cred-info { font-size: 12px; text-align: center; color: #9CA3AF; margin-top: auto; border-top: 1px solid #D4AF37; padding-top: 10px; width: 100%;}
+        
+        .cred-wrapper {
+            display: flex; gap: 20px; padding: 20px; background-color: #fff; width: 850px;
+        }
+
+        .cred-card {
+            width: 380px; height: 550px;
+            background: #111;
+            border: 3px solid #D4AF37;
+            border-radius: 15px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
+            color: white; font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .cred-bg-effect {
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(17,17,17,0) 60%);
+            z-index: 0; pointer-events: none;
+        }
+
+        /* Frente */
+        .cred-header { z-index: 10; display: flex; flex-direction: column; align-items: center; width: 100%; border-bottom: 2px solid rgba(212,175,55,0.3); padding-bottom: 15px; margin-bottom: 20px; }
+        .cred-logo { width: 70px; margin-bottom: 10px; }
+        .cred-title-main { color: #D4AF37; font-size: 16px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .cred-photo-box { z-index: 10; width: 140px; height: 180px; border: 4px solid #D4AF37; border-radius: 10px; overflow: hidden; margin-bottom: 20px; background-color: #222; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .cred-photo { width: 100%; height: 100%; object-fit: cover; }
+        
+        .cred-name { z-index: 10; font-size: 24px; font-weight: 900; text-align: center; line-height: 1.1; margin-bottom: 5px; text-transform: uppercase; color: #fff; }
+        .cred-cargo-badge { z-index: 10; background-color: #D4AF37; color: #000; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
+        
+        .cred-footer { z-index: 10; margin-top: auto; font-size: 12px; color: #aaa; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; width: 100%; }
+
+        /* Verso */
+        .cred-verso-title { z-index: 10; color: #D4AF37; font-size: 18px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; border-bottom: 1px solid #D4AF37; padding-bottom: 10px; width: 100%; text-align: center; }
+        .cred-info-group { z-index: 10; width: 100%; margin-bottom: 15px; }
+        .cred-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
+        .cred-value { font-size: 14px; color: #fff; font-weight: 600; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 4px; }
+        
+        .cred-signature-box { z-index: 10; margin-top: auto; width: 100%; text-align: center; padding-top: 20px; }
+        .cred-signature-line { border-top: 1px solid #fff; width: 80%; margin: 0 auto 5px auto; }
+        .cred-signature-name { font-size: 12px; color: #D4AF37; font-weight: bold; }
+        .cred-signature-role { font-size: 10px; color: #aaa; }
     </style>
 </head>
 <body class="bg-dark text-gray-200">
@@ -477,13 +505,62 @@
         </div>
     </div>
 
-    <div id="credencialTemplate">
-        <span class="cred-title">UMADSA MINISTERIAL</span>
-        <img src="https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png" class="cred-logo">
-        <img src="" id="credFotoResult" class="cred-photo">
-        <div class="cred-name" id="credNomeResult">NOME DO LÍDER</div>
-        <div class="cred-cargo" id="credCargoResult">Cargo | Campo</div>
-        <div class="cred-info">CREDENCIAL OFICIAL DE LIDERANÇA<br>Válida para o ano de 2026</div>
+    <div id="credencialContainer">
+        <div class="cred-wrapper" id="credencialTemplate">
+            
+            <div class="cred-card">
+                <div class="cred-bg-effect"></div>
+                <div class="cred-header">
+                    <img src="https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png" class="cred-logo">
+                    <span class="cred-title-main">UMADSA MINISTERIAL</span>
+                </div>
+                <div class="cred-photo-box">
+                    <img src="" id="credFotoFrente" class="cred-photo">
+                </div>
+                <div class="cred-name" id="credNomeFrente">NOME DO LÍDER</div>
+                <div class="cred-cargo-badge" id="credCargoFrente">Cargo</div>
+                <div class="cred-footer">
+                    Válida até: Dezembro/2026<br>Uso Pessoal e Intransferível
+                </div>
+            </div>
+
+            <div class="cred-card" style="justify-content: flex-start; text-align: left; align-items: flex-start;">
+                <div class="cred-bg-effect"></div>
+                <div class="cred-verso-title">Dados Ministeriais</div>
+                
+                <div class="cred-info-group">
+                    <div class="cred-label">Nome Completo</div>
+                    <div class="cred-value" id="credNomeVerso">NOME COMPLETO</div>
+                </div>
+                
+                <div class="cred-info-group">
+                    <div class="cred-label">Registro ID</div>
+                    <div class="cred-value" id="credIdVerso">LID-00000000000000</div>
+                </div>
+
+                <div class="cred-info-group">
+                    <div class="cred-label">Campo de Atuação</div>
+                    <div class="cred-value" id="credCampoVerso">Nome do Campo</div>
+                </div>
+
+                <div class="cred-info-group">
+                    <div class="cred-label">Congregação</div>
+                    <div class="cred-value" id="credCongVerso">Nome da Congregação</div>
+                </div>
+
+                <div class="cred-info-group">
+                    <div class="cred-label">Data de Nascimento</div>
+                    <div class="cred-value" id="credNascVerso">00/00/0000</div>
+                </div>
+
+                <div class="cred-signature-box">
+                    <div class="cred-signature-line"></div>
+                    <div class="cred-signature-name">Pr. Márcio Dias</div>
+                    <div class="cred-signature-role">Presidente UMADSA</div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <div id="eventDetailsModal" class="modal-overlay">
@@ -725,6 +802,8 @@
             }
         }
 
+        let liderIDGerado = ""; // Armazena o ID gerado para botar no PDF
+
         async function enviarLider(e) {
             e.preventDefault();
             const btn = document.getElementById('btnLiderSubmit');
@@ -736,35 +815,51 @@
             const cargo = document.getElementById('liderCargo').value;
             const campo = document.getElementById('liderCampo').value;
             const email = document.getElementById('liderEmail').value;
+            const nascRaw = document.getElementById('liderNasc').value;
+            const nascParts = nascRaw.split('-');
+            const nascFormatado = `${nascParts[2]}/${nascParts[1]}/${nascParts[0]}`;
+            const congregacao = document.getElementById('liderCongregacao').value;
+            
+            // Simula um ID provisório até receber o real do backend, para a foto ficar bonita.
+            liderIDGerado = "LID-" + new Date().getTime().toString().slice(-8);
 
-            // Prepara a credencial oculta para gerar o PDF em Base64
-            document.getElementById('credNomeResult').innerText = nome;
-            document.getElementById('credCargoResult').innerText = `${cargo} | ${campo}`;
-            document.getElementById('credFotoResult').src = fotoLiderBase64;
+            // Preenche o template FRENTE
+            document.getElementById('credNomeFrente').innerText = nome.split(' ')[0] + " " + (nome.split(' ')[1] || "");
+            document.getElementById('credCargoFrente').innerText = cargo;
+            document.getElementById('credFotoFrente').src = fotoLiderBase64;
+            
+            // Preenche o template VERSO
+            document.getElementById('credNomeVerso').innerText = nome;
+            document.getElementById('credIdVerso').innerText = liderIDGerado;
+            document.getElementById('credCampoVerso').innerText = campo;
+            document.getElementById('credCongVerso').innerText = congregacao;
+            document.getElementById('credNascVerso').innerText = nascFormatado;
 
             const element = document.getElementById('credencialTemplate');
+            
+            // Revela para o html2pdf conseguir capturar
+            document.getElementById('credencialContainer').style.opacity = "1";
+            document.getElementById('credencialContainer').style.zIndex = "1000";
+
             const opt = {
                 margin: 0,
-                filename: 'Credencial_UMADSA_2026.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: [90, 140], orientation: 'portrait' } 
+                filename: 'Credencial_UMADSA.pdf',
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 3, useCORS: true, backgroundColor: "#ffffff" },
+                jsPDF: { unit: 'px', format: [850, 590], orientation: 'landscape' } // Formato perfeito pra imprimir
             };
 
-            // Revela temporariamente o HTML para o gerador
-            element.style.left = "0";
-            element.style.top = "0";
-            element.style.zIndex = "-1"; 
-
             try {
-                // Gera o PDF e converte para Base64
+                // Aguarda meio segundo para garantir que a imagem base64 renderizou na div
+                await new Promise(r => setTimeout(r, 500));
+                
+                // Gera o PDF em Base64
                 const pdfBase64Data = await html2pdf().set(opt).from(element).outputPdf('datauristring');
+                const pureBase64 = pdfBase64Data.split(',')[1];
                 
                 // Esconde a div novamente
-                element.style.left = "-9999px";
-
-                // Extrai apenas a string base64 pura (removendo "data:application/pdf;base64,")
-                const pureBase64 = pdfBase64Data.split(',')[1];
+                document.getElementById('credencialContainer').style.opacity = "0";
+                document.getElementById('credencialContainer').style.zIndex = "-100";
 
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...';
 
@@ -772,13 +867,13 @@
                     authToken: atob(_k),
                     action: "cadastroLider",
                     nome: nome,
-                    nascimento: document.getElementById('liderNasc').value,
+                    nascimento: nascRaw,
                     telefone: document.getElementById('liderTel').value,
                     email: email,
                     campo: campo,
-                    congregacao: document.getElementById('liderCongregacao').value,
+                    congregacao: congregacao,
                     cargo: cargo,
-                    pdfBase64: pureBase64 // Envia o PDF junto!
+                    pdfBase64: pureBase64 // Envia o PDF pro Google Script disparar o e-mail
                 };
 
                 const response = await fetch(API_CADASTROS, { 
@@ -791,8 +886,11 @@
                 const resData = await response.json();
                 
                 if (resData.status === 'success') {
+                    // Atualiza o ID na tela de sucesso com o real retornado pelo servidor
                     document.getElementById('msgLiderNome').innerText = `Obrigado, ${nome.split(' ')[0]}!`;
-                    
+                    liderIDGerado = resData.data.idLider; 
+                    document.getElementById('credIdVerso').innerText = liderIDGerado; // Atualiza pro PDF que será baixado manualmente
+
                     closeModal('liderSurpresaModal');
                     document.getElementById('formLider').reset();
                     document.getElementById('liderFotoPreview').classList.add('hidden');
@@ -804,30 +902,30 @@
             } catch (error) { 
                 alert("Erro ao processar o cadastro ou gerar a credencial."); 
                 console.error(error);
-                element.style.left = "-9999px"; // Garante que a div esconda se der erro
+                document.getElementById('credencialContainer').style.opacity = "0";
             } finally { 
                 btn.innerHTML = originalText; 
                 btn.disabled = false; 
             }
         }
 
-        // Função para o botão do Modal de Sucesso (baixar localmente o PDF que já foi gerado e enviado por email)
+        // Função para o botão do Modal de Sucesso (baixar o PDF localmente pro PC/Celular do líder)
         function gerarPDFCredencial() {
             const element = document.getElementById('credencialTemplate');
+            document.getElementById('credencialContainer').style.opacity = "1";
+            document.getElementById('credencialContainer').style.zIndex = "1000";
+
             const opt = {
                 margin: 0,
-                filename: 'Credencial_UMADSA_2026.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: [90, 140], orientation: 'portrait' } 
+                filename: `Credencial_UMADSA_${liderIDGerado}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 3, useCORS: true, backgroundColor: "#ffffff" },
+                jsPDF: { unit: 'px', format: [850, 590], orientation: 'landscape' } 
             };
 
-            element.style.left = "0";
-            element.style.top = "0";
-            element.style.zIndex = "-1"; 
-
             html2pdf().set(opt).from(element).save().then(() => {
-                element.style.left = "-9999px";
+                document.getElementById('credencialContainer').style.opacity = "0";
+                document.getElementById('credencialContainer').style.zIndex = "-100";
             });
         }
         // ==========================================
