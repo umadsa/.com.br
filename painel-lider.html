@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal do Líder | UMADSA Ministerial</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
@@ -23,169 +22,188 @@
     </script>
 
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #09090b; color: #e4e4e7; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #09090b; color: #e4e4e7; overflow: hidden; }
         
-        /* Custom Scrollbar Dourada */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #18181b; }
         ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #b5952f; }
 
-        /* Animações */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Estilos de Inputs para Tema Dark */
         .form-input {
             width: 100%; padding: 0.5rem 0.75rem; background-color: #000000; border: 1px solid #3f3f46; 
-            color: #ffffff; border-radius: 0.375rem; transition: all 0.2s; outline: none;
+            color: #ffffff; border-radius: 0.375rem; outline: none; transition: all 0.2s;
         }
         .form-input:focus { border-color: #d4af37; box-shadow: 0 0 0 1px #d4af37; }
         .form-input:disabled { background-color: #18181b; color: #71717a; cursor: not-allowed; }
-        
         select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d4af37' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
 
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); }
-        .nav-active { border-left: 3px solid #d4af37; background-color: #18181b; color: #d4af37 !important; }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); z-index: 100;}
+        .loader { border: 3px solid #18181b; border-top: 3px solid #d4af37; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="flex h-screen w-full relative">
 
-    <div id="mobileOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 z-20 hidden md:hidden"></div>
-
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-zinc-950 border-r border-zinc-800 flex flex-col shadow-2xl z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
-        <div class="p-6 border-b border-zinc-800 flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 border-2 border-amber-500 rounded flex items-center justify-center text-amber-500 font-bold text-xl">U</div>
-                <div>
-                    <h1 class="font-bold text-white leading-tight">UMADSA</h1>
-                    <p class="text-xs text-amber-500 font-bold uppercase tracking-widest">Portal Líder</p>
-                </div>
+    <div id="loginScreen" class="absolute inset-0 bg-black z-[200] flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-amber-500 rounded-xl p-8 w-full max-w-md shadow-[0_0_40px_rgba(212,175,55,0.15)] fade-in">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 border-2 border-amber-500 rounded-full flex items-center justify-center text-amber-500 font-bold text-3xl mx-auto mb-4">U</div>
+                <h1 class="text-2xl font-serif font-bold text-white leading-tight">Painel da Liderança</h1>
+                <p class="text-sm text-zinc-400 mt-1">Insira suas credenciais regionais</p>
             </div>
-            <button onclick="toggleSidebar()" class="md:hidden text-zinc-400 hover:text-amber-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-        </div>
-
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="#" class="nav-active flex items-center gap-3 px-4 py-3 rounded-r-lg text-zinc-300 hover:bg-zinc-900 transition font-medium">
-                <i class="fa-regular fa-calendar-check w-5 text-center"></i> Agenda / Eventos
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-r-lg text-zinc-400 hover:bg-zinc-900 hover:text-amber-500 transition font-medium border-l-3 border-transparent">
-                <i class="fa-solid fa-users w-5 text-center"></i> Equipe Regional
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-r-lg text-zinc-400 hover:bg-zinc-900 hover:text-amber-500 transition font-medium border-l-3 border-transparent">
-                <i class="fa-solid fa-id-badge w-5 text-center"></i> Capelania
-            </a>
-        </nav>
-
-        <div class="p-4 border-t border-zinc-800 bg-zinc-950">
-            <div class="flex items-center gap-3 mb-4 px-2">
-                <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700">
-                    <i class="fa-solid fa-user text-zinc-400"></i>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Usuário (Ex: regional1)</label>
+                    <input type="text" id="loginUser" required class="form-input" placeholder="regional1">
                 </div>
                 <div>
-                    <p id="userNameDisplay" class="text-sm font-bold text-white">Carregando...</p>
-                    <p id="userRegionalDisplay" class="text-xs text-amber-500">Regional</p>
+                    <label class="block text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Senha</label>
+                    <input type="password" id="loginPass" required class="form-input" placeholder="••••••••">
                 </div>
-            </div>
-            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 text-sm text-zinc-500 hover:text-red-500 transition py-2 border border-zinc-800 rounded hover:border-red-900 hover:bg-red-950/30">
-                <i class="fa-solid fa-right-from-bracket"></i> Sair do Painel
-            </button>
-        </div>
-    </aside>
-
-    <main class="flex-1 flex flex-col overflow-hidden bg-black w-full">
-        <header class="bg-zinc-950 border-b border-zinc-800 h-16 flex items-center justify-between px-4 md:px-8 z-10 shrink-0">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="md:hidden text-amber-500 text-xl"><i class="fa-solid fa-bars"></i></button>
-                <h2 class="text-lg md:text-xl font-serif font-bold text-white">Gestão de Agenda</h2>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <button onclick="openEventModal()" class="bg-amber-500 text-black px-4 py-2 rounded font-bold text-sm hover:bg-amber-600 transition flex items-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                    <i class="fa-solid fa-plus"></i> Novo Evento
+                <button type="submit" id="btnLogin" class="w-full mt-6 bg-amber-500 text-black font-bold py-3 rounded hover:bg-amber-600 transition flex items-center justify-center gap-2 uppercase tracking-wide">
+                    Acessar Sistema
                 </button>
-            </div>
-        </header>
+            </form>
+        </div>
+    </div>
 
-        <div class="flex-1 overflow-y-auto p-4 md:p-8">
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="bg-zinc-900 p-5 rounded-lg border border-zinc-800 flex flex-col justify-center">
-                    <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Total de Eventos (Ano)</span>
-                    <span class="text-3xl font-black text-white" id="kpiTotal">0</span>
-                </div>
-                <div class="bg-zinc-900 p-5 rounded-lg border border-amber-500/50 flex flex-col justify-center relative overflow-hidden">
-                    <div class="absolute right-0 top-0 w-16 h-16 bg-amber-500/10 rounded-bl-full"></div>
-                    <span class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">Eventos Próximos (Mês)</span>
-                    <span class="text-3xl font-black text-white" id="kpiMes">0</span>
-                </div>
-                <div class="bg-zinc-900 p-5 rounded-lg border border-zinc-800 flex flex-col justify-center">
-                    <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Da Minha Regional</span>
-                    <span class="text-3xl font-black text-white" id="kpiRegional">0</span>
-                </div>
-            </div>
+    <div id="appWrapper" class="flex w-full h-full hidden">
+        
+        <div id="mobileOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 z-20 hidden md:hidden"></div>
 
-            <div class="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
-                <div class="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950">
-                    <h3 class="font-bold text-white"><i class="fa-regular fa-calendar text-amber-500 mr-2"></i> Eventos Cadastrados</h3>
-                    <div class="relative">
-                        <input type="text" id="searchInput" placeholder="Buscar evento..." class="bg-black border border-zinc-700 text-sm text-white rounded-full pl-9 pr-4 py-1.5 focus:border-amber-500 outline-none" onkeyup="renderTable()">
-                        <i class="fa-solid fa-search absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-zinc-950 border-r border-zinc-800 flex flex-col shadow-2xl z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <div class="p-6 border-b border-zinc-800 flex items-center justify-between gap-3 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 border-2 border-amber-500 rounded flex items-center justify-center text-amber-500 font-bold text-xl">U</div>
+                    <div>
+                        <h1 class="font-bold text-white leading-tight">UMADSA</h1>
+                        <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Portal Líder</p>
                     </div>
                 </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-zinc-400 hover:text-amber-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <a href="#" class="border-left-3 border-amber-500 bg-zinc-900 text-amber-500 flex items-center gap-3 px-4 py-3 rounded-r-lg font-medium border-l-4">
+                    <i class="fa-regular fa-calendar-check w-5 text-center"></i> Agenda Oficial
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-r-lg text-zinc-400 hover:bg-zinc-900 hover:text-amber-500 transition font-medium border-l-4 border-transparent">
+                    <i class="fa-solid fa-users w-5 text-center"></i> Minha Equipe
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-zinc-800 bg-zinc-950 shrink-0">
+                <div class="flex items-center gap-3 mb-4 px-2">
+                    <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 shrink-0">
+                        <i class="fa-solid fa-user text-amber-500"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p id="userNameDisplay" class="text-sm font-bold text-white truncate">Carregando...</p>
+                        <p id="userRegionalDisplay" class="text-xs text-amber-500 truncate">Regional</p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="w-full flex items-center justify-center gap-2 text-sm text-zinc-400 hover:text-red-500 transition py-2 border border-zinc-800 rounded hover:border-red-900 hover:bg-red-950/30">
+                    <i class="fa-solid fa-power-off"></i> Encerrar Sessão
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col overflow-hidden bg-black w-full relative h-full">
+            <header class="bg-zinc-950 border-b border-zinc-800 h-16 flex items-center justify-between px-4 md:px-8 shrink-0">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="md:hidden text-amber-500 text-xl"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="text-base md:text-xl font-serif font-bold text-white truncate">Sincronização de Agenda</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="fetchEvents()" class="text-zinc-400 hover:text-amber-500 p-2" title="Atualizar Lista"><i class="fa-solid fa-rotate-right"></i></button>
+                    <button onclick="openEventModal('create')" class="bg-amber-500 text-black px-4 py-2 rounded font-bold text-sm hover:bg-amber-600 transition flex items-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                        <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Novo Evento</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 w-full">
                 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left min-w-[800px]">
-                        <thead class="bg-zinc-950 text-zinc-400 text-xs uppercase font-bold border-b border-zinc-800">
-                            <tr>
-                                <th class="p-4">Data</th>
-                                <th class="p-4">Evento</th>
-                                <th class="p-4">Regional / Campo</th>
-                                <th class="p-4">Nível</th>
-                                <th class="p-4 text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="eventsTableBody" class="divide-y divide-zinc-800 text-sm">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-8">
+                    <div class="bg-zinc-900 p-4 md:p-5 rounded-lg border border-zinc-800 flex flex-col justify-center col-span-2 md:col-span-1">
+                        <span class="text-[10px] md:text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">Próximos (Geral)</span>
+                        <span class="text-2xl md:text-3xl font-black text-white" id="kpiTotal">0</span>
+                    </div>
+                    <div class="bg-zinc-900 p-4 md:p-5 rounded-lg border border-zinc-800 flex flex-col justify-center">
+                        <span class="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Da Minha Regional</span>
+                        <span class="text-2xl md:text-3xl font-black text-white" id="kpiRegional">0</span>
+                    </div>
+                    <div class="bg-zinc-900 p-4 md:p-5 rounded-lg border border-zinc-800 flex flex-col justify-center">
+                        <span class="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Neste Mês</span>
+                        <span class="text-2xl md:text-3xl font-black text-white" id="kpiMes">0</span>
+                    </div>
+                </div>
+
+                <div class="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden w-full flex flex-col">
+                    <div class="p-4 border-b border-zinc-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-zinc-950">
+                        <h3 class="font-bold text-white text-sm md:text-base"><i class="fa-brands fa-google text-amber-500 mr-2"></i> Eventos Google Agenda</h3>
+                        <div class="relative w-full sm:w-auto">
+                            <input type="text" id="searchInput" placeholder="Buscar evento..." class="w-full sm:w-64 bg-black border border-zinc-700 text-sm text-white rounded-full pl-9 pr-4 py-1.5 focus:border-amber-500 outline-none" onkeyup="renderTable()">
+                            <i class="fa-solid fa-search absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left min-w-[700px] text-xs md:text-sm">
+                            <thead class="bg-zinc-950 text-zinc-400 uppercase font-bold border-b border-zinc-800">
+                                <tr>
+                                    <th class="p-4">Data</th>
+                                    <th class="p-4">Evento</th>
+                                    <th class="p-4">Localização (Nível)</th>
+                                    <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eventsTableBody" class="divide-y divide-zinc-800">
+                                <tr><td colspan="5" class="p-8 text-center text-zinc-500"><div class="loader mx-auto mb-2"></div> Carregando agenda...</td></tr>
                             </tbody>
-                    </table>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
-    <div id="eventModal" class="hidden fixed inset-0 z-50 modal-overlay flex justify-end">
-        <div class="w-full max-w-2xl bg-zinc-950 h-full border-l border-amber-500 flex flex-col transform transition-transform duration-300 translate-x-full shadow-2xl" id="eventPanel">
+    <div id="eventModal" class="hidden fixed inset-0 z-[100] modal-overlay flex justify-end">
+        <div class="w-full max-w-2xl bg-zinc-950 h-full md:border-l border-amber-500 flex flex-col transform transition-transform duration-300 translate-x-full shadow-2xl" id="eventPanel">
             
-            <div class="bg-black border-b border-zinc-800 px-6 py-5 flex justify-between items-center shrink-0">
+            <div class="bg-black border-b border-zinc-800 px-4 md:px-6 py-4 flex justify-between items-center shrink-0">
                 <div>
-                    <h2 class="text-xl font-serif font-bold text-white">Cadastrar Novo Evento</h2>
-                    <p class="text-xs text-amber-500 mt-1 uppercase tracking-widest">Agenda Oficial UMADSA</p>
+                    <h2 class="text-lg md:text-xl font-serif font-bold text-white" id="modalTitle">Cadastrar Evento</h2>
+                    <p class="text-[10px] md:text-xs text-amber-500 mt-1 uppercase tracking-widest">Sincronização Direta</p>
                 </div>
-                <button onclick="closeEventModal()" class="text-zinc-500 hover:text-amber-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                <button onclick="closeEventModal()" class="text-zinc-500 hover:text-amber-500 transition p-2"><i class="fa-solid fa-xmark text-xl md:text-2xl"></i></button>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+            <div class="flex-1 overflow-y-auto p-4 md:p-6">
                 
                 <div id="conflictAlert" class="hidden mb-6 bg-amber-500/10 border border-amber-500 p-4 rounded-lg flex items-start gap-3">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xl mt-0.5"></i>
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xl mt-0.5 shrink-0"></i>
                     <div>
                         <h4 class="font-bold text-amber-500 text-sm">Atenção: Conflito de Agenda</h4>
                         <p class="text-xs text-zinc-300 mt-1">Já existe um evento marcado para esta data: <strong id="conflictEventName" class="text-white"></strong>.</p>
-                        <p class="text-xs text-zinc-400 mt-1">Confira a agenda completa. Se for necessário, você pode prosseguir com o lançamento.</p>
+                        <p class="text-xs text-zinc-400 mt-1">Se for necessário, você pode forçar o salvamento clicando novamente no botão.</p>
                     </div>
                 </div>
 
                 <form id="formEvent" onsubmit="salvarEvento(event)" class="space-y-6">
-                    
-                    <div class="bg-zinc-900 p-5 rounded-lg border border-zinc-800">
-                        <h3 class="text-amber-500 font-bold text-sm uppercase mb-4 border-b border-zinc-800 pb-2"><i class="fa-solid fa-sitemap mr-2"></i> Organização</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="hidden" id="evId"> <div class="bg-zinc-900 p-4 md:p-5 rounded-lg border border-zinc-800">
+                        <h3 class="text-amber-500 font-bold text-xs md:text-sm uppercase mb-4 border-b border-zinc-800 pb-2"><i class="fa-solid fa-sitemap mr-2"></i> Organização</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Sua Regional (Automático)</label>
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Sua Regional</label>
                                 <input type="text" id="evRegional" class="form-input opacity-70 cursor-not-allowed text-amber-500 font-bold" readonly>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Nível do Evento</label>
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Nível do Evento</label>
                                 <select id="evNivel" class="form-input" required onchange="toggleCongregacao()">
                                     <option value="" disabled selected>Selecione...</option>
                                     <option value="Ministerial Regional">Ministerial Regional</option>
@@ -194,9 +212,9 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Campo</label>
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Campo</label>
                                 <select id="evCampo" class="form-input" required>
-                                    <option value="" disabled selected>Selecione o Campo...</option>
+                                    <option value="" disabled selected>Selecione...</option>
                                     <option value="Sede Santo André">Sede Santo André</option>
                                     <option value="Campo Diadema">Campo Diadema</option>
                                     <option value="Campo Mauá">Campo Mauá</option>
@@ -204,18 +222,17 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Nome da Congregação</label>
-                                <input type="text" id="evCongregacao" class="form-input" placeholder="Ex: Congregação Betel" disabled>
-                                <p class="text-[10px] text-zinc-500 mt-1">Apenas para eventos nível Congregação.</p>
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Nome da Congregação</label>
+                                <input type="text" id="evCongregacao" class="form-input" placeholder="Ex: Cong. Betel" disabled>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-zinc-900 p-5 rounded-lg border border-zinc-800">
-                        <h3 class="text-amber-500 font-bold text-sm uppercase mb-4 border-b border-zinc-800 pb-2"><i class="fa-solid fa-ticket mr-2"></i> Detalhes do Evento</h3>
+                    <div class="bg-zinc-900 p-4 md:p-5 rounded-lg border border-zinc-800">
+                        <h3 class="text-amber-500 font-bold text-xs md:text-sm uppercase mb-4 border-b border-zinc-800 pb-2"><i class="fa-solid fa-ticket mr-2"></i> Detalhes do Evento</h3>
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Tipo de Evento</label>
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Tipo de Evento</label>
                                 <select id="evTipo" class="form-input" required>
                                     <option value="" disabled selected>Selecione...</option>
                                     <option value="Culto de Jovens">Culto de Jovens</option>
@@ -228,11 +245,11 @@
                             
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Data (Início)</label>
+                                    <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Data Início</label>
                                     <input type="date" id="evDataInicio" class="form-input" required onchange="limparConflito()">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Horário</label>
+                                    <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Horário</label>
                                     <input type="time" id="evHorario" class="form-input" required>
                                 </div>
                             </div>
@@ -240,47 +257,42 @@
                             <div>
                                 <label class="flex items-center gap-2 cursor-pointer mt-2">
                                     <input type="checkbox" id="evMultiDay" class="w-4 h-4 accent-amber-500 bg-zinc-800 border-zinc-700 rounded" onchange="toggleMultiDay()">
-                                    <span class="text-sm text-zinc-300 font-bold">O evento tem mais de 1 dia?</span>
+                                    <span class="text-xs md:text-sm text-zinc-300 font-bold">O evento tem mais de 1 dia?</span>
                                 </label>
                             </div>
                             
                             <div id="boxDataTermino" class="hidden">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Data de Término</label>
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Data Término</label>
                                 <input type="date" id="evDataTermino" class="form-input">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Banner do Evento (Opcional)</label>
-                                <input type="file" id="evBanner" class="form-input text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-amber-500 file:text-black hover:file:bg-amber-600" accept="image/*">
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-zinc-900 p-5 rounded-lg border border-zinc-800">
-                        <h3 class="text-amber-500 font-bold text-sm uppercase mb-4 border-b border-zinc-800 pb-2"><i class="fa-solid fa-location-dot mr-2"></i> Localização</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div class="md:col-span-1">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">CEP</label>
+                    <div class="bg-zinc-900 p-4 md:p-5 rounded-lg border border-zinc-800">
+                        <h3 class="text-amber-500 font-bold text-xs md:text-sm uppercase mb-4 border-b border-zinc-800 pb-2"><i class="fa-solid fa-location-dot mr-2"></i> Endereço Exato</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                            <div class="sm:col-span-1">
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">CEP</label>
                                 <input type="text" id="evCep" class="form-input" placeholder="00000-000" onblur="buscarCEP()" maxlength="9">
                             </div>
-                            <div class="md:col-span-3">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Rua / Logradouro</label>
+                            <div class="sm:col-span-3">
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Logradouro / Rua</label>
                                 <input type="text" id="evRua" class="form-input" required>
                             </div>
-                            <div class="md:col-span-1">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Número</label>
+                            <div class="sm:col-span-1">
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Número</label>
                                 <input type="text" id="evNum" class="form-input" required>
                             </div>
-                            <div class="md:col-span-3">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Bairro</label>
+                            <div class="sm:col-span-3">
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Bairro</label>
                                 <input type="text" id="evBairro" class="form-input" required>
                             </div>
-                            <div class="md:col-span-3">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Cidade</label>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Cidade</label>
                                 <input type="text" id="evCidade" class="form-input" required>
                             </div>
-                            <div class="md:col-span-1">
-                                <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">UF</label>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] md:text-xs font-bold text-zinc-400 uppercase mb-1">Estado (UF)</label>
                                 <input type="text" id="evUF" class="form-input" required maxlength="2">
                             </div>
                         </div>
@@ -288,42 +300,87 @@
                 </form>
             </div>
 
-            <div class="bg-black border-t border-zinc-800 p-6 shrink-0 flex justify-end gap-3">
-                <button type="button" onclick="closeEventModal()" class="px-6 py-3 rounded text-zinc-400 font-bold hover:text-white transition">Cancelar</button>
-                <button type="submit" form="formEvent" id="btnSubmitForm" class="bg-amber-500 text-black px-8 py-3 rounded font-bold uppercase tracking-wider hover:bg-amber-600 transition flex items-center gap-2">
-                    <i class="fa-solid fa-check"></i> Lançar Evento
+            <div class="bg-black border-t border-zinc-800 p-4 md:p-6 shrink-0 flex flex-col-reverse sm:flex-row justify-end gap-3">
+                <button type="button" onclick="closeEventModal()" class="w-full sm:w-auto px-6 py-3 rounded text-zinc-400 font-bold hover:bg-zinc-900 transition border border-zinc-800 sm:border-none">Cancelar</button>
+                <button type="submit" form="formEvent" id="btnSubmitForm" class="w-full sm:w-auto bg-amber-500 text-black px-8 py-3 rounded font-bold uppercase tracking-wider hover:bg-amber-600 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check"></i> Salvar na Agenda
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- DADOS SIMULADOS ---
-        const loggedUser = {
-            nome: "Pr. Marcos Oliveira",
-            regional: "Regional 3",
-            perfil: "Líder Regional"
-        };
+        // CONFIGURAÇÃO DA API (COLE SUA URL AQUI)
+        const GOOGLE_CALENDAR_API = 'https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec'; 
 
-        let eventsDB = [
-            { id: 1, dataInicio: "2026-03-15", tipo: "Congresso", nivel: "Ministerial Regional", campo: "Sede Santo André", regional: "Regional 1", status: "Confirmado" },
-            { id: 2, dataInicio: "2026-03-28", tipo: "Treinamento", nivel: "Campo", campo: "Campo Diadema", regional: "Regional 2", status: "Confirmado" },
-            { id: 3, dataInicio: "2026-04-10", tipo: "Festividade", nivel: "Congregação", campo: "Campo Mauá", regional: "Regional 3", congregacao: "Cong. Betel", status: "Confirmado" }
-        ];
+        // ESTADO GLOBAL
+        let loggedUser = null;
+        let eventsDB = [];
+        let conflictIgnored = false;
+        let modalAction = 'create'; // 'create' ou 'update'
 
-        let conflictIgnored = false; 
-
-        // --- INICIALIZAÇÃO ---
+        // --- INICIALIZAÇÃO & LOGIN ---
         window.onload = () => {
-            document.getElementById('userNameDisplay').innerText = loggedUser.nome;
-            document.getElementById('userRegionalDisplay').innerText = loggedUser.regional;
-            document.getElementById('evRegional').value = loggedUser.regional;
-
-            renderTable();
-            updateKPIs();
+            const savedSession = localStorage.getItem('umadsa_lider_session');
+            if (savedSession) {
+                loggedUser = JSON.parse(savedSession);
+                showApp();
+            }
         };
 
-        // --- SIDEBAR TOGGLE ---
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnLogin');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Autenticando...`;
+            btn.disabled = true;
+
+            const payload = {
+                action: 'login',
+                username: document.getElementById('loginUser').value.trim().toLowerCase(),
+                password: document.getElementById('loginPass').value
+            };
+
+            try {
+                const res = await fetch(GOOGLE_CALENDAR_API, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await res.json();
+
+                if (data.result === 'success') {
+                    loggedUser = data.user;
+                    localStorage.setItem('umadsa_lider_session', JSON.stringify(loggedUser));
+                    showApp();
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                alert("Erro de conexão com o servidor. Verifique a URL da API.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('appWrapper').classList.remove('hidden');
+            document.getElementById('userNameDisplay').innerText = loggedUser.name;
+            document.getElementById('userRegionalDisplay').innerText = loggedUser.regional;
+            fetchEvents();
+        }
+
+        function logout() {
+            if(confirm("Deseja encerrar a sessão?")) {
+                localStorage.removeItem('umadsa_lider_session');
+                window.location.reload();
+            }
+        }
+
         function toggleSidebar() {
             const sb = document.getElementById('sidebar');
             const ov = document.getElementById('mobileOverlay');
@@ -336,57 +393,85 @@
             }
         }
 
-        function logout() {
-            if(confirm("Deseja sair do portal?")) {
-                alert("Deslogado com sucesso. (Simulação)");
+        // --- INTEGRAÇÃO GOOGLE CALENDAR ---
+        async function fetchEvents() {
+            const tbody = document.getElementById('eventsTableBody');
+            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-zinc-500"><div class="loader mx-auto mb-2"></div> Sincronizando agenda...</td></tr>`;
+            
+            try {
+                const res = await fetch(GOOGLE_CALENDAR_API, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'read' })
+                });
+                const data = await res.json();
+                
+                if (data.result === 'success') {
+                    eventsDB = data.events;
+                    renderTable();
+                    updateKPIs();
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Erro: ${data.message}</td></tr>`;
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Falha de conexão.</td></tr>`;
             }
         }
 
-        // --- RENDERIZAÇÃO DA TABELA ---
         function renderTable() {
             const tbody = document.getElementById('eventsTableBody');
             const term = document.getElementById('searchInput').value.toLowerCase();
             
             tbody.innerHTML = '';
             
-            const filtered = eventsDB
-                .sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio))
-                .filter(ev => 
-                    ev.tipo.toLowerCase().includes(term) || 
-                    ev.regional.toLowerCase().includes(term) ||
-                    ev.campo.toLowerCase().includes(term)
-                );
+            let filtered = eventsDB.filter(ev => 
+                ev.tipo.toLowerCase().includes(term) || 
+                ev.regional.toLowerCase().includes(term) ||
+                ev.campo.toLowerCase().includes(term)
+            );
+
+            // Filtragem de Segurança: Se não for Admin (Geral), vê apenas da própria Regional
+            if (loggedUser.regional !== "Geral") {
+                filtered = filtered.filter(ev => ev.regional === loggedUser.regional);
+            }
+
+            // Ordena Data
+            filtered.sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
 
             if(filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-zinc-600">Nenhum evento encontrado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-zinc-600">Nenhum evento na agenda.</td></tr>`;
                 return;
             }
 
             filtered.forEach(ev => {
-                const dataFormatada = new Date(ev.dataInicio + "T00:00:00").toLocaleDateString('pt-BR');
+                const dataObj = new Date(ev.dataInicio + "T00:00:00");
+                const mesShort = dataObj.toLocaleString('pt-br', {month: 'short'});
+                const dia = String(dataObj.getDate()).padStart(2, '0');
+                
                 const tr = `
                     <tr class="hover:bg-zinc-800/50 transition border-b border-zinc-800 last:border-0 fade-in">
-                        <td class="p-4">
-                            <div class="flex items-center gap-2">
-                                <div class="bg-zinc-800 p-2 rounded text-amber-500 flex flex-col items-center justify-center w-12 border border-zinc-700">
-                                    <span class="text-[10px] uppercase font-bold leading-none">${new Date(ev.dataInicio + "T00:00:00").toLocaleString('pt-br', {month: 'short'})}</span>
-                                    <span class="text-lg font-black leading-none">${ev.dataInicio.split('-')[2]}</span>
-                                </div>
+                        <td class="p-3 md:p-4">
+                            <div class="bg-zinc-800 p-1 md:p-2 rounded text-amber-500 flex flex-col items-center justify-center w-10 md:w-12 border border-zinc-700">
+                                <span class="text-[8px] md:text-[10px] uppercase font-bold leading-none">${mesShort}</span>
+                                <span class="text-base md:text-lg font-black leading-none mt-1">${dia}</span>
                             </div>
                         </td>
-                        <td class="p-4">
+                        <td class="p-3 md:p-4">
                             <p class="font-bold text-white">${ev.tipo}</p>
-                            <p class="text-xs text-zinc-500">${ev.nivel}</p>
+                            <p class="text-[10px] md:text-xs text-amber-500"><i class="fa-regular fa-clock"></i> ${ev.horario}</p>
                         </td>
-                        <td class="p-4">
-                            <p class="text-sm text-zinc-300 font-bold">${ev.regional}</p>
-                            <p class="text-xs text-zinc-500">${ev.campo} ${ev.congregacao ? ` - ${ev.congregacao}` : ''}</p>
+                        <td class="p-3 md:p-4">
+                            <p class="text-xs md:text-sm text-zinc-300 font-bold">${ev.regional} <span class="text-[10px] bg-zinc-800 px-1 rounded border border-zinc-700 font-normal ml-1 hidden sm:inline-block">${ev.nivel}</span></p>
+                            <p class="text-[10px] md:text-xs text-zinc-500 truncate max-w-[120px] md:max-w-xs">${ev.campo} ${ev.congregacao ? ` - ${ev.congregacao}` : ''}</p>
                         </td>
-                        <td class="p-4">
-                            <span class="bg-zinc-800 text-zinc-300 px-2 py-1 rounded text-[10px] font-bold uppercase border border-zinc-700">${ev.nivel}</span>
+                        <td class="p-3 md:p-4 text-center hidden sm:table-cell">
+                            <span class="text-green-500 bg-green-500/10 px-2 py-1 rounded text-[10px] font-bold border border-green-500/20"><i class="fa-solid fa-circle text-[6px] mr-1"></i> ${ev.status}</span>
                         </td>
-                        <td class="p-4 text-center">
-                            <span class="text-green-500 bg-green-500/10 px-2 py-1 rounded text-xs font-bold border border-green-500/20"><i class="fa-solid fa-circle text-[8px] mr-1"></i> ${ev.status}</span>
+                        <td class="p-3 md:p-4 text-right">
+                            <button onclick="openEventModal('update', '${ev.id}')" class="text-zinc-400 hover:text-amber-500 bg-zinc-900 hover:bg-zinc-800 p-2 rounded border border-zinc-800 transition" title="Editar Evento">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -397,7 +482,7 @@
         function updateKPIs() {
             document.getElementById('kpiTotal').innerText = eventsDB.length;
             
-            const currentMonth = 3; 
+            const currentMonth = new Date().getMonth() + 1; 
             const mesCount = eventsDB.filter(e => parseInt(e.dataInicio.split('-')[1]) === currentMonth).length;
             document.getElementById('kpiMes').innerText = mesCount;
 
@@ -406,12 +491,55 @@
         }
 
         // --- LÓGICA DO FORMULÁRIO (MODAL) ---
-        function openEventModal() {
+        function openEventModal(action, eventId = null) {
             document.getElementById('formEvent').reset();
-            document.getElementById('evRegional').value = loggedUser.regional; 
+            limparConflito();
+            modalAction = action;
+            document.getElementById('evId').value = eventId || "";
+
+            const inputRegional = document.getElementById('evRegional');
+            const nivelSelect = document.getElementById('evNivel');
+            const btnSubmit = document.getElementById('btnSubmitForm');
+            
+            inputRegional.value = loggedUser.regional; 
+
+            if (action === 'create') {
+                document.getElementById('modalTitle').innerText = "Cadastrar Novo Evento";
+                btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> Salvar na Agenda`;
+                // Se o logado não for o Admin Geral, força a escolha da regional
+                if(loggedUser.regional === "Geral") {
+                    inputRegional.readOnly = false;
+                    inputRegional.classList.remove('cursor-not-allowed', 'opacity-70');
+                    inputRegional.placeholder = "Digite a Regional...";
+                    inputRegional.value = "";
+                }
+            } else if (action === 'update') {
+                document.getElementById('modalTitle').innerText = "Editar Evento";
+                btnSubmit.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Atualizar Agenda`;
+                
+                // Preenche dados
+                const ev = eventsDB.find(e => e.id === eventId);
+                if(ev) {
+                    inputRegional.value = ev.regional;
+                    nivelSelect.value = ev.nivel;
+                    document.getElementById('evCampo').value = ev.campo;
+                    document.getElementById('evCongregacao').value = ev.congregacao;
+                    document.getElementById('evTipo').value = ev.tipo;
+                    document.getElementById('evDataInicio').value = ev.dataInicio;
+                    document.getElementById('evHorario').value = ev.horario;
+                    
+                    if(ev.dataTermino && ev.dataTermino !== ev.dataInicio) {
+                        document.getElementById('evMultiDay').checked = true;
+                        document.getElementById('evDataTermino').value = ev.dataTermino;
+                    }
+                    
+                    // Tenta jogar o texto bruto do local na Rua para edição simples
+                    document.getElementById('evRua').value = ev.local; 
+                }
+            }
+            
             toggleCongregacao();
             toggleMultiDay();
-            limparConflito();
             
             document.getElementById('eventModal').classList.remove('hidden');
             setTimeout(() => { document.getElementById('eventPanel').classList.remove('translate-x-full'); }, 10);
@@ -427,14 +555,9 @@
             const inputCong = document.getElementById('evCongregacao');
             
             if (nivel === "Congregação") {
-                inputCong.disabled = false;
-                inputCong.required = true;
-                inputCong.classList.remove('opacity-50');
+                inputCong.disabled = false; inputCong.required = true; inputCong.classList.remove('opacity-50');
             } else {
-                inputCong.disabled = true;
-                inputCong.required = false;
-                inputCong.value = "";
-                inputCong.classList.add('opacity-50');
+                inputCong.disabled = true; inputCong.required = false; inputCong.value = ""; inputCong.classList.add('opacity-50');
             }
         }
 
@@ -444,62 +567,50 @@
             const inputDataTermino = document.getElementById('evDataTermino');
 
             if (isMulti) {
-                box.classList.remove('hidden');
-                box.classList.add('fade-in');
-                inputDataTermino.required = true;
+                box.classList.remove('hidden'); box.classList.add('fade-in'); inputDataTermino.required = true;
             } else {
-                box.classList.add('hidden');
-                inputDataTermino.required = false;
-                inputDataTermino.value = "";
+                box.classList.add('hidden'); inputDataTermino.required = false; inputDataTermino.value = "";
             }
         }
 
-        // BUSCA DE CEP (Integração ViaCEP)
         async function buscarCEP() {
             const cepInput = document.getElementById('evCep');
             let cep = cepInput.value.replace(/\D/g, '');
             if (cep.length !== 8) return;
-
             cepInput.disabled = true;
             try {
                 const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
                 const data = await response.json();
-                
                 if (!data.erro) {
                     document.getElementById('evRua').value = data.logradouro;
                     document.getElementById('evBairro').value = data.bairro;
                     document.getElementById('evCidade').value = data.localidade;
                     document.getElementById('evUF').value = data.uf;
                     document.getElementById('evNum').focus();
-                } else {
-                    alert("CEP não encontrado.");
-                }
+                } else alert("CEP não encontrado.");
             } catch (error) {
-                console.error("Erro no CEP", error);
+                console.error(error);
             } finally {
                 cepInput.disabled = false;
             }
         }
 
-        // --- SALVAMENTO E VERIFICAÇÃO DE CONFLITO ---
         function limparConflito() {
             document.getElementById('conflictAlert').classList.add('hidden');
             const btn = document.getElementById('btnSubmitForm');
-            btn.innerHTML = `<i class="fa-solid fa-check"></i> Lançar Evento`;
+            btn.innerHTML = modalAction === 'create' ? `<i class="fa-solid fa-check"></i> Salvar na Agenda` : `<i class="fa-solid fa-pen-to-square"></i> Atualizar Agenda`;
             btn.classList.remove('bg-red-600', 'hover:bg-red-700', 'text-white');
             btn.classList.add('bg-amber-500', 'hover:bg-amber-600', 'text-black');
             conflictIgnored = false;
         }
-        
-        const GOOGLE_CALENDAR_API = 'https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec';
-        
+
         async function salvarEvento(e) {
             e.preventDefault();
 
             const dataInicio = document.getElementById('evDataInicio').value;
-            const tipo = document.getElementById('evTipo').value;
             
-            if (!conflictIgnored) {
+            // Verifica conflito apenas se for CREATE
+            if (modalAction === 'create' && !conflictIgnored) {
                 const conflito = eventsDB.find(ev => ev.dataInicio === dataInicio);
                 if (conflito) {
                     document.getElementById('conflictAlert').classList.remove('hidden');
@@ -507,7 +618,7 @@
                     document.getElementById('conflictEventName').innerText = `${conflito.tipo} (${conflito.nivel} - ${conflito.regional})`;
                     
                     const btn = document.getElementById('btnSubmitForm');
-                    btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Estou Ciente, Lançar Mesmo Assim`;
+                    btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Forçar Salvamento`;
                     btn.classList.remove('bg-amber-500', 'hover:bg-amber-600', 'text-black');
                     btn.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
                     
@@ -518,18 +629,17 @@
 
             const btn = document.getElementById('btnSubmitForm');
             const originalBtnHTML = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando com Google Agenda...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Conectando ao Google...`;
             btn.disabled = true;
 
-            const bannerInput = document.getElementById('evBanner').files[0];
-            const bannerLinkMock = bannerInput ? `https://seusite.com.br/uploads/${bannerInput.name}` : "";
-
             const payload = {
-                tipo: tipo,
+                action: modalAction,
+                eventId: document.getElementById('evId').value,
+                tipo: document.getElementById('evTipo').value,
                 nivel: document.getElementById('evNivel').value,
                 campo: document.getElementById('evCampo').value,
                 congregacao: document.getElementById('evCongregacao').value,
-                regional: loggedUser.regional,
+                regional: document.getElementById('evRegional').value,
                 dataInicio: dataInicio,
                 horario: document.getElementById('evHorario').value,
                 isMultiDay: document.getElementById('evMultiDay').checked,
@@ -540,44 +650,33 @@
                 cidade: document.getElementById('evCidade').value,
                 uf: document.getElementById('evUF').value,
                 cep: document.getElementById('evCep').value,
-                bannerLink: bannerLinkMock
+                bannerLink: "" // Placeholder
             };
 
             try {
                 const response = await fetch(GOOGLE_CALENDAR_API, {
                     method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify(payload)
                 });
                 
                 const data = await response.json();
 
                 if (data.result === 'success') {
-                    eventsDB.push({
-                        id: data.eventId, 
-                        dataInicio: payload.dataInicio,
-                        tipo: payload.tipo,
-                        nivel: payload.nivel,
-                        campo: payload.campo,
-                        regional: payload.regional,
-                        congregacao: payload.congregacao,
-                        status: "Sincronizado"
-                    });
-                    
-                    alert("Sucesso! Evento criado e sincronizado com o Google Agenda oficial.");
+                    alert("Sucesso! Agenda oficial atualizada.");
                     closeEventModal();
-                    renderTable();
-                    updateKPIs();
+                    fetchEvents(); // Recarrega do zero para garantir dados limpos da nuvem
                 } else {
-                    alert("Erro ao criar na agenda: " + data.message);
+                    alert("Erro do Servidor: " + data.message);
                 }
 
             } catch (error) {
-                alert("Erro de conexão com a API do Google Calendar.");
+                alert("Falha na comunicação com a nuvem.");
                 console.error(error);
             } finally {
                 btn.innerHTML = originalBtnHTML;
                 btn.disabled = false;
-                limparConflito();
             }
         }
     </script>
