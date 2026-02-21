@@ -381,9 +381,9 @@
                     <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
                         <i class="fa-solid fa-location-dot"></i>
                     </div>
-                    <div>
+                    <div class="flex-1 min-w-0">
                         <p class="text-gray-400 text-xs uppercase font-bold">Localização</p>
-                        <p class="text-white font-medium" id="modalEventLocation">Local</p>
+                        <p class="text-white font-medium leading-relaxed" id="modalEventLocation">Local</p>
                     </div>
                 </div>
                 <div class="pt-4 mt-4 border-t border-gray-800">
@@ -426,7 +426,6 @@
         let agendaData = [];
         let currentAgendaPage = 0;
 
-        // Função para detectar quantos eventos mostrar por página baseado na largura
         function getEventsPerPage() {
             if (window.innerWidth < 768) return 1;
             if (window.innerWidth < 1024) return 2;
@@ -435,7 +434,6 @@
 
         async function carregarAgenda() {
             const grid = document.getElementById('agendaGrid');
-            
             try {
                 const res = await fetch(GOOGLE_API_URL, {
                     method: 'POST',
@@ -443,34 +441,27 @@
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify({ action: 'read' })
                 });
-                
                 const data = await res.json();
-                
                 if(data.result === 'success') {
                     const hoje = new Date();
                     hoje.setHours(0,0,0,0);
-                    
                     agendaData = data.events
                         .filter(ev => new Date(ev.dataInicio + "T00:00:00") >= hoje)
                         .sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
-                    
                     if(agendaData.length > 12) agendaData = agendaData.slice(0, 12);
-                    
                     renderAgenda();
                 } else {
-                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Erro ao carregar agenda: ${data.message}</div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Erro ao carregar agenda.</div>`;
                 }
             } catch(e) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Falha de conexão com a Agenda Oficial.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Falha de conexão.</div>`;
             }
         }
 
         function renderAgenda() {
             const grid = document.getElementById('agendaGrid');
             grid.innerHTML = '';
-
             const eventsPerPage = getEventsPerPage();
-
             if(agendaData.length === 0) {
                 grid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 font-medium">Nenhum evento futuro programado no momento.</div>';
                 document.getElementById('btnPrevEvents').disabled = true;
@@ -478,18 +469,15 @@
                 document.getElementById('agendaCounter').innerText = `Pág. 0 de 0`;
                 return;
             }
-
             const startIndex = currentAgendaPage * eventsPerPage;
-            const endIndex = startIndex + eventsPerPage;
-            const eventsToShow = agendaData.slice(startIndex, endIndex);
+            const eventsToShow = agendaData.slice(startIndex, startIndex + eventsPerPage);
 
             eventsToShow.forEach(ev => {
                 const dateObj = new Date(ev.dataInicio + "T00:00:00");
                 const day = String(dateObj.getDate()).padStart(2, '0');
                 const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
 
-                const tituloDisplay = ev.tipo;
-                let hierarquiaLocal = ev.campo;
+                let hierarquiaLocal = ev.campo || ev.regional;
                 if (ev.congregacao) hierarquiaLocal += ` - ${ev.congregacao}`;
                 const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
 
@@ -502,8 +490,8 @@
                             </div>
                             <span class="text-sm font-medium text-gray-500 ml-1"><i class="fa-regular fa-clock"></i> ${ev.horario}</span>
                         </div>
-                        <h3 class="text-xl font-bold mb-2 text-black leading-tight">${tituloDisplay}</h3>
-                        <p class="text-gray-500 text-xs mb-4 uppercase font-bold tracking-widest">${ev.nivel}</p>
+                        <h3 class="text-xl font-bold mb-2 text-black leading-tight">${ev.tipo}</h3>
+                        <p class="text-gray-500 text-xs mb-4 uppercase font-bold tracking-widest bg-gray-100 inline-block px-2 py-1 rounded">${ev.nivel}</p>
                         <div class="mt-auto pt-4 border-t border-gray-100">
                             <p class="text-xs font-bold text-gray-400 uppercase truncate" title="${localDisplay}"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                         </div>
@@ -521,25 +509,9 @@
             document.getElementById('agendaCounter').innerText = `Pág. ${currentAgendaPage + 1} de ${totalPages}`;
         }
 
-        function nextEvents() {
-            if ((currentAgendaPage + 1) * getEventsPerPage() < agendaData.length) {
-                currentAgendaPage++;
-                renderAgenda();
-            }
-        }
-
-        function prevEvents() {
-            if (currentAgendaPage > 0) {
-                currentAgendaPage--;
-                renderAgenda();
-            }
-        }
-
-        // Listener para ajustar a agenda ao redimensionar a tela
-        window.addEventListener('resize', () => {
-            currentAgendaPage = 0;
-            renderAgenda();
-        });
+        function nextEvents() { if ((currentAgendaPage + 1) * getEventsPerPage() < agendaData.length) { currentAgendaPage++; renderAgenda(); } }
+        function prevEvents() { if (currentAgendaPage > 0) { currentAgendaPage--; renderAgenda(); } }
+        window.addEventListener('resize', () => { currentAgendaPage = 0; renderAgenda(); });
 
         let selectedEvent = null;
 
@@ -550,7 +522,7 @@
             const dateParts = selectedEvent.dataInicio.split('-');
             const dateStr = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
             
-            let hierarquiaModal = selectedEvent.campo;
+            let hierarquiaModal = selectedEvent.campo || "Geral";
             if (selectedEvent.congregacao) hierarquiaModal += ` - ${selectedEvent.congregacao}`;
             hierarquiaModal += ` (${selectedEvent.regional})`;
 
@@ -563,33 +535,45 @@
             document.getElementById('modalEventDesc').innerText = selectedEvent.descricao || "Nenhum detalhe adicional informado.";
 
             document.getElementById('btnAddToCalendar').onclick = () => addToGoogleCalendar(selectedEvent);
-
             openModal('eventDetailsModal');
         }
 
         function addToGoogleCalendar(ev) {
-            // Criar a data base (YYYY-MM-DD)
-            const baseDate = ev.dataInicio; // Formato esperado: 2026-02-21
-            const time = ev.horario; // Formato esperado: 19:30
+            // CORREÇÃO: Pega hora e data e constrói o formato exato ignorando o fuso universal (UTC)
+            const [ano, mes, dia] = ev.dataInicio.split('-');
+            const [hora, min] = ev.horario.split(':');
             
-            // Construir data de início no fuso local e converter para UTC para o link do Calendar
-            const startDateTime = new Date(`${baseDate}T${time}:00`);
+            const startDate = new Date(ano, mes - 1, dia, hora, min);
             
-            // Função para formatar para o padrão ICS (YYYYMMDDTHHMMSSZ)
-            const formatToICS = (date) => {
-                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            // CORREÇÃO: Verificar se existe dataTermino. Se não, assume 2 horas depois.
+            let endDate;
+            if (ev.dataTermino) {
+                const [tAno, tMes, tDia] = ev.dataTermino.split('-');
+                // Usamos a hora de início para o término se a planilha não fornecer hora de término, adicionando 2h de segurança
+                endDate = new Date(tAno, tMes - 1, tDia, hora, min);
+                endDate.setHours(endDate.getHours() + 2);
+            } else {
+                endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000));
+            }
+
+            const formatGCal = (date) => {
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
             };
 
-            const startStr = formatToICS(startDateTime);
-            
-            // Define término 2 horas depois
-            const endDateTime = new Date(startDateTime.getTime() + (2 * 60 * 60 * 1000));
-            const endStr = formatToICS(endDateTime);
+            const startStr = formatGCal(startDate);
+            const endStr = formatGCal(endDate);
 
-            let titulo = `${ev.tipo} | ${ev.nivel}`;
-            let local = `${ev.campo}${ev.congregacao ? ' - ' + ev.congregacao : ''}${ev.local ? ', ' + ev.local : ''}`;
+            // Título detalhado para a Agenda (Tipo | Nível | Campo)
+            let titulo = `${ev.tipo} | ${ev.nivel} | ${ev.campo || ev.regional}`;
+            if (ev.congregacao) titulo += ` - ${ev.congregacao}`;
 
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao || '')}&location=${encodeURIComponent(local)}`;
+            // Local detalhado para a Agenda (Maps)
+            let local = ev.campo || ev.regional;
+            if (ev.congregacao) local += ` - ${ev.congregacao}`;
+            if (ev.local) local += `, ${ev.local}`;
+
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao || "")}&location=${encodeURIComponent(local)}`;
             window.open(url, '_blank');
         }
 
