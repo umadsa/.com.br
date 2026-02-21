@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UMADSA Ministerial | Liderança e Serviço</title>
     <meta name="description" content="Portal Ministerial UMADSA - Agenda, Capelania e Alistamento.">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
@@ -65,7 +65,7 @@
             padding: 20px;
             backdrop-filter: blur(5px);
         }
-        
+
         .modal-content {
             background: #171717; /* dark gray */
             border: 1px solid #D4AF37;
@@ -76,17 +76,28 @@
             position: relative;
             animation: slideUp 0.3s ease-out;
             color: white;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes slideUp {
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        
+
         .gold-gradient-text {
             background: linear-gradient(to right, #FDE047, #D4AF37);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        /* Efeito Hover nos Cards da Agenda */
+        .event-card { transition: all 0.3s ease; }
+        .event-card:hover { transform: translateY(-5px); border-color: #D4AF37; box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.3); }
+        
+        /* Ajuste para evitar quebra lateral em telas pequenas */
+        #agendaGrid {
+            word-break: break-word;
         }
     </style>
 </head>
@@ -95,37 +106,44 @@
     <nav class="bg-black border-b border-gold-700 shadow-md fixed w-full z-40 transition-all" id="navbar">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 border-2 border-gold-500 rounded flex items-center justify-center text-gold-500 font-bold text-xl">U</div>
+                <img src="https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png" alt="Brasão UMADSA" class="w-10 h-10 md:w-12 md:h-12 object-contain">
                 <div>
                     <h1 class="text-xl font-bold text-white leading-tight">UMADSA <span class="text-gold-500">MINISTERIAL</span></h1>
                 </div>
             </div>
-            
+
             <div class="hidden md:flex items-center space-x-6 font-semibold text-sm uppercase tracking-wide">
                 <a href="#home" class="hover:text-gold-500 transition">Início</a>
                 <a href="#agenda" class="hover:text-gold-500 transition">Agenda</a>
                 <a href="#capelania" class="hover:text-gold-500 transition">Capelania</a>
                 <a href="#alistamento" class="hover:text-gold-500 transition">Alistamento</a>
-                
-                <button onclick="openModal('loginModal')" class="bg-transparent border border-gold-500 text-gold-500 px-5 py-2 rounded hover:bg-gold-500 hover:text-black transition flex items-center gap-2">
+
+                <a href="store.html" class="text-gold-500 hover:text-white transition flex items-center gap-2 mr-4" title="Umadsa Store">
+                    <i class="fa-solid fa-bag-shopping text-xl"></i>
+                    <span class="hidden md:inline font-bold">Store</span>
+                </a>
+
+                <a href="painel-lider.html" class="bg-transparent border border-gold-500 text-gold-500 px-5 py-2 rounded hover:bg-gold-500 hover:text-black transition flex items-center gap-2">
                     <i class="fa-solid fa-lock"></i> Portal do Líder
-                </button>
+                </a>
             </div>
 
             <button class="md:hidden text-gold-500 text-2xl" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
+
         <div id="mobile-menu" class="hidden md:hidden bg-black border-t border-gold-700 p-4 space-y-4">
             <a href="#agenda" class="block text-white hover:text-gold-500">Agenda</a>
             <a href="#capelania" class="block text-white hover:text-gold-500">Capelania</a>
             <a href="#alistamento" class="block text-white hover:text-gold-500">Alistamento</a>
-            <a href="link-da-sua-loja-react" class="text-gold-500 hover:text-white transition flex items-center gap-2 mr-4" title="Umadsa Store">
-    <i class="fa-solid fa-bag-shopping text-xl"></i>
-    <span class="hidden md:inline font-bold">Store</span>
-</a>
 
-            <button onclick="openModal('loginModal')" class="w-full text-left font-bold text-gold-500"><i class="fa-solid fa-lock"></i> Portal do Líder</button>
+            <a href="store.html" class="text-gold-500 hover:text-white transition flex items-center gap-2" title="Umadsa Store">
+                <i class="fa-solid fa-bag-shopping text-xl"></i>
+                <span class="font-bold">Store</span>
+            </a>
+
+            <a href="painel-lider.html" class="block w-full text-left font-bold text-gold-500 mt-2"><i class="fa-solid fa-lock"></i> Portal do Líder</a>
         </div>
     </nav>
 
@@ -141,46 +159,45 @@
                 Plataforma oficial para organização, agenda ministerial e alistamento de voluntários da UMADSA.
             </p>
             <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <a href="#alistamento" class="bg-gold-500 hover:bg-gold-600 text-black px-8 py-4 rounded font-bold uppercase tracking-wider transition shadow-lg">
+                <a href="#alistamento" class="bg-gold-500 hover:bg-gold-600 text-black px-8 py-4 rounded font-bold uppercase tracking-wider transition shadow-lg inline-block">
                     Faça Parte
                 </a>
-                <button onclick="openModal('loginModal')" class="bg-transparent border-2 border-white hover:border-gold-500 hover:text-gold-500 text-white px-8 py-4 rounded font-bold uppercase tracking-wider transition">
+                <a href="painel-lider.html" class="bg-transparent border-2 border-white hover:border-gold-500 hover:text-gold-500 text-white px-8 py-4 rounded font-bold uppercase tracking-wider transition inline-block">
                     Acesso Restrito
-                </button>
+                </a>
             </div>
         </div>
     </section>
 
-    <section id="agenda" class="py-20 bg-white text-black">
+    <section id="agenda" class="py-20 bg-white text-black relative">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Agenda Ministerial</h2>
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Agenda Oficial</h2>
                 <div class="w-24 h-1 bg-gold-500 mx-auto"></div>
-                <p class="mt-4 text-gray-600">Acompanhe as próximas reuniões, consagrações e eventos da liderança.</p>
+                <p class="mt-4 text-gray-600">Fique por dentro das datas, treinamentos e consagrações.</p>
             </div>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="border border-gray-200 rounded-lg p-6 hover:shadow-xl transition hover:border-gold-500 group">
-                    <div class="text-gold-500 font-bold text-lg mb-2"><i class="fa-regular fa-calendar-days"></i> 15 de Março, 2026</div>
-                    <h3 class="text-xl font-bold mb-2">Reunião Geral de Liderança</h3>
-                    <p class="text-gray-600 text-sm mb-4"><i class="fa-solid fa-location-dot mr-1"></i> Templo Sede - 19h30</p>
-                    <p class="text-sm text-gray-500 border-t pt-4">Convocação para todos os líderes de campo e congregação. Traje: Oficial.</p>
+
+            <div id="agendaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 min-h-[250px]">
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <i class="fa-solid fa-spinner fa-spin text-4xl text-gold-500 mb-4"></i>
+                    <p class="font-bold">A carregar os próximos eventos oficiais...</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gray-200 pt-8">
+                <div class="flex items-center gap-4">
+                    <button onclick="prevEvents()" id="btnPrevEvents" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gold-500 hover:text-gold-500 transition disabled:opacity-30 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span class="text-sm font-bold text-gray-400" id="agendaCounter">1 de 1</span>
+                    <button onclick="nextEvents()" id="btnNextEvents" class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gold-500 hover:text-gold-500 transition disabled:opacity-30 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
                 
-                <div class="border border-gray-200 rounded-lg p-6 hover:shadow-xl transition hover:border-gold-500 group">
-                    <div class="text-gold-500 font-bold text-lg mb-2"><i class="fa-regular fa-calendar-days"></i> 28 de Março, 2026</div>
-                    <h3 class="text-xl font-bold mb-2">Treinamento de Capelania</h3>
-                    <p class="text-gray-600 text-sm mb-4"><i class="fa-solid fa-location-dot mr-1"></i> Congregação Central - 14h00</p>
-                    <p class="text-sm text-gray-500 border-t pt-4">Módulo 1 para novos candidatos aprovados no alistamento.</p>
-                </div>
-
-                <div class="bg-black text-white rounded-lg p-6 shadow-lg relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-gold-500 opacity-10 rounded-full blur-xl"></div>
-                    <div class="text-gold-500 font-bold text-lg mb-2"><i class="fa-solid fa-fire"></i> Todo Sábado</div>
-                    <h3 class="text-xl font-bold mb-2">Consagração UMADSA</h3>
-                    <p class="text-gray-300 text-sm mb-4"><i class="fa-solid fa-location-dot mr-1"></i> Polos Regionais - 08h00</p>
-                    <p class="text-sm text-gray-400 border-t border-gray-700 pt-4">Buscando revestimento e direcionamento espiritual.</p>
-                </div>
+                <a href="agenda-completa.html" class="bg-black text-gold-500 hover:text-white px-6 py-3 rounded-lg font-bold uppercase tracking-widest transition text-xs flex items-center gap-2 border border-black hover:border-gold-500">
+                    <i class="fa-regular fa-calendar-days"></i> Ver Agenda Completa
+                </a>
             </div>
         </div>
     </section>
@@ -191,7 +208,7 @@
                 <div class="md:w-1/2">
                     <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4 text-white">Ministério de <span class="gold-gradient-text">Capelania</span></h2>
                     <p class="text-gray-400 mb-6 leading-relaxed">
-                        A Capelania UMADSA atua levando consolo, esperança e a palavra de Deus a hospitais, presídios, asilos e escolas. Procuramos jovens e adultos maduros, dispostos a doar seu tempo e amor ao próximo.
+                        A Capelania UMADSA atua levando consolo, esperança e a palavra de Deus a hospitais, presídios, asilos e escolas. Procuramos jovens e adultos maduros, dispostos a doarem seu tempo e amor ao próximo.
                     </p>
                     <ul class="space-y-3 mb-8 text-gray-300 text-sm">
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold-500"></i> Treinamento Teórico e Prático</li>
@@ -219,7 +236,7 @@
             <p class="text-gray-400 max-w-2xl mx-auto mb-12">
                 O corpo de Cristo precisa dos seus talentos. Aliste-se em um dos nossos departamentos e sirva com excelência.
             </p>
-            
+
             <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                 <div class="border border-gray-800 bg-dark p-8 rounded-lg hover:border-gold-500 transition">
                     <i class="fa-solid fa-bullhorn text-4xl text-gold-500 mb-4"></i>
@@ -263,31 +280,6 @@
         </div>
     </footer>
 
-
-    <div id="loginModal" class="modal-overlay">
-        <div class="modal-content">
-            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-lock text-4xl text-gold-500 mb-3"></i>
-                <h3 class="text-2xl font-bold font-serif text-white">Painel do Líder</h3>
-                <p class="text-gray-400 text-sm mt-1">Acesso restrito à coordenação.</p>
-            </div>
-            <form onsubmit="fazerLogin(event)">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-gold-500 uppercase tracking-widest mb-1">Usuário / Credencial</label>
-                        <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gold-500 uppercase tracking-widest mb-1">Senha</label>
-                        <input type="password" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none">
-                    </div>
-                </div>
-                <button type="submit" class="w-full mt-8 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition">Acessar Painel</button>
-            </form>
-        </div>
-    </div>
-
     <div id="capelaniaModal" class="modal-overlay">
         <div class="modal-content">
             <button onclick="closeModal('capelaniaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -323,4 +315,269 @@
                 <h3 class="text-2xl font-bold font-serif text-white">Alistamento UMADSA</h3>
                 <p class="text-gray-400 text-sm mt-1">Estamos felizes com sua disposição!</p>
             </div>
-            <form onsubmit="simularEnvio(event, 'alistamentoModal')
+            <form onsubmit="simularEnvio(event, 'alistamentoModal')">
+                <div class="space-y-3 text-sm">
+                    <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Nome">
+                    <input type="tel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="WhatsApp">
+                    <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500">
+                        <option value="">Departamento Desejado...</option>
+                        <option>Comunicação e Mídia</option>
+                        <option>Intercessão</option>
+                        <option>Recepção e Logística</option>
+                        <option>Outro</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition">Me Alistar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="liderSurpresaModal" class="modal-overlay">
+        <div class="modal-content border-2 border-gold-500" style="box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);">
+            <button onclick="closeModal('liderSurpresaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-gift text-4xl text-gold-500 mb-3"></i>
+                <h3 class="text-2xl font-bold font-serif text-white">Atualização de Liderança</h3>
+                <p class="text-gold-400 text-sm mt-1">Ao finalizar, enviaremos seu material surpresa!</p>
+            </div>
+            <form onsubmit="simularEnvio(event, 'liderSurpresaModal')">
+                <div class="space-y-3 text-sm">
+                    <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Nome do Líder">
+                    <div class="grid grid-cols-2 gap-3">
+                        <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500">
+                            <option value="">Cargo...</option>
+                            <option>Líder de Campo</option>
+                            <option>Líder de Congregação</option>
+                            <option>Vice-Líder</option>
+                        </select>
+                        <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Setor/Congregação">
+                    </div>
+                    <input type="email" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="E-mail (Para receber o material)">
+                </div>
+                <button type="submit" class="w-full mt-6 bg-gold-500 text-black font-bold py-3 rounded hover:bg-gold-600 transition uppercase tracking-wide">Finalizar e Receber Presente</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="eventDetailsModal" class="modal-overlay">
+        <div class="modal-content border-t-4 border-gold-500">
+            <button onclick="closeModal('eventDetailsModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="mb-6 border-b border-gray-800 pb-4 pr-6">
+                <span class="text-gold-500 text-xs font-bold uppercase tracking-widest" id="modalEventNivel">Nível</span>
+                <h3 class="text-2xl font-serif font-bold text-white mt-1 leading-tight" id="modalEventTitle">Título do Evento</h3>
+            </div>
+            
+            <div class="space-y-4 mb-8 text-sm">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
+                        <i class="fa-regular fa-calendar"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-xs uppercase font-bold">Data e Hora</p>
+                        <p class="text-white font-medium" id="modalEventDateTime">00/00/0000 - 00:00</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-gray-400 text-xs uppercase font-bold">Localização</p>
+                        <p class="text-white font-medium leading-relaxed" id="modalEventLocation">Local</p>
+                    </div>
+                </div>
+                <div class="pt-4 mt-4 border-t border-gray-800">
+                    <p class="text-gray-400 text-xs uppercase font-bold mb-2">Sobre o Evento</p>
+                    <p class="text-gray-300 leading-relaxed whitespace-pre-wrap" id="modalEventDesc">Descrição completa aqui.</p>
+                </div>
+            </div>
+
+            <button id="btnAddToCalendar" class="w-full bg-gold-500 text-black font-bold py-4 rounded hover:bg-gold-600 transition flex items-center justify-center gap-2 uppercase tracking-wide">
+                <i class="fa-brands fa-google"></i> Adicionar à Minha Agenda
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Funções Básicas
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) event.target.style.display = "none"; }
+
+        function simularEnvio(e, modalId) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
+            setTimeout(() => {
+                if(modalId === 'liderSurpresaModal') {
+                    alert("Cadastro atualizado com sucesso! Verifique seu e-mail em alguns minutos para acessar seu presente.");
+                } else {
+                    alert("Dados enviados com sucesso! A diretoria entrará em contato.");
+                }
+                closeModal(modalId);
+                btn.innerHTML = originalText;
+                e.target.reset();
+            }, 1500);
+        }
+
+        const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec"; 
+
+        let agendaData = [];
+        let currentAgendaPage = 0;
+
+        function getEventsPerPage() {
+            if (window.innerWidth < 768) return 1;
+            if (window.innerWidth < 1024) return 2;
+            return 3;
+        }
+
+        async function carregarAgenda() {
+            const grid = document.getElementById('agendaGrid');
+            try {
+                const res = await fetch(GOOGLE_API_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'read' })
+                });
+                const data = await res.json();
+                if(data.result === 'success') {
+                    const hoje = new Date();
+                    hoje.setHours(0,0,0,0);
+                    agendaData = data.events
+                        .filter(ev => new Date(ev.dataInicio + "T00:00:00") >= hoje)
+                        .sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+                    if(agendaData.length > 12) agendaData = agendaData.slice(0, 12);
+                    renderAgenda();
+                } else {
+                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Erro ao carregar agenda.</div>`;
+                }
+            } catch(e) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Falha de conexão.</div>`;
+            }
+        }
+
+        function renderAgenda() {
+            const grid = document.getElementById('agendaGrid');
+            grid.innerHTML = '';
+            const eventsPerPage = getEventsPerPage();
+            if(agendaData.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 font-medium">Nenhum evento futuro programado no momento.</div>';
+                document.getElementById('btnPrevEvents').disabled = true;
+                document.getElementById('btnNextEvents').disabled = true;
+                document.getElementById('agendaCounter').innerText = `Pág. 0 de 0`;
+                return;
+            }
+            const startIndex = currentAgendaPage * eventsPerPage;
+            const eventsToShow = agendaData.slice(startIndex, startIndex + eventsPerPage);
+
+            eventsToShow.forEach(ev => {
+                const dateObj = new Date(ev.dataInicio + "T00:00:00");
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
+
+                let hierarquiaLocal = ev.campo || ev.regional;
+                if (ev.congregacao) hierarquiaLocal += ` - ${ev.congregacao}`;
+                const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
+
+                const card = `
+                    <div class="event-card border border-gray-200 bg-white rounded-lg p-6 cursor-pointer relative group flex flex-col h-full mx-auto w-full max-w-sm md:max-w-none" onclick="openEventDetails('${ev.id}')">
+                        <div class="text-gold-500 font-bold text-lg mb-3 flex items-center gap-2">
+                            <div class="bg-dark text-gold-500 rounded px-3 py-1 flex flex-col items-center leading-none shadow shrink-0">
+                                <span class="text-[10px]">${month}</span>
+                                <span class="text-lg">${day}</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-500 ml-1"><i class="fa-regular fa-clock"></i> ${ev.horario}</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-black leading-tight">${ev.tipo}</h3>
+                        <p class="text-gray-500 text-xs mb-4 uppercase font-bold tracking-widest bg-gray-100 inline-block px-2 py-1 rounded">${ev.nivel}</p>
+                        <div class="mt-auto pt-4 border-t border-gray-100">
+                            <p class="text-xs font-bold text-gray-400 uppercase truncate" title="${localDisplay}"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
+                        </div>
+                        <div class="absolute inset-0 bg-gold-500 bg-opacity-0 group-hover:bg-opacity-10 transition rounded-lg flex items-center justify-center">
+                            <span class="opacity-0 group-hover:opacity-100 bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition shadow-xl">Ver Detalhes</span>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+
+            const totalPages = Math.ceil(agendaData.length / eventsPerPage);
+            document.getElementById('btnPrevEvents').disabled = currentAgendaPage === 0;
+            document.getElementById('btnNextEvents').disabled = currentAgendaPage >= totalPages - 1;
+            document.getElementById('agendaCounter').innerText = `Pág. ${currentAgendaPage + 1} de ${totalPages}`;
+        }
+
+        function nextEvents() { if ((currentAgendaPage + 1) * getEventsPerPage() < agendaData.length) { currentAgendaPage++; renderAgenda(); } }
+        function prevEvents() { if (currentAgendaPage > 0) { currentAgendaPage--; renderAgenda(); } }
+        window.addEventListener('resize', () => { currentAgendaPage = 0; renderAgenda(); });
+
+        let selectedEvent = null;
+
+        function openEventDetails(id) {
+            selectedEvent = agendaData.find(e => e.id === id);
+            if(!selectedEvent) return;
+
+            const dateParts = selectedEvent.dataInicio.split('-');
+            const dateStr = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            
+            let hierarquiaModal = selectedEvent.campo || "Geral";
+            if (selectedEvent.congregacao) hierarquiaModal += ` - ${selectedEvent.congregacao}`;
+            hierarquiaModal += ` (${selectedEvent.regional})`;
+
+            const localDisplay = selectedEvent.local ? `${hierarquiaModal} | Endereço: ${selectedEvent.local}` : hierarquiaModal;
+
+            document.getElementById('modalEventNivel').innerText = selectedEvent.nivel;
+            document.getElementById('modalEventTitle').innerText = selectedEvent.tipo;
+            document.getElementById('modalEventDateTime').innerText = `${dateStr} às ${selectedEvent.horario}h`;
+            document.getElementById('modalEventLocation').innerText = localDisplay;
+            document.getElementById('modalEventDesc').innerText = selectedEvent.descricao || "Nenhum detalhe adicional informado.";
+
+            document.getElementById('btnAddToCalendar').onclick = () => addToGoogleCalendar(selectedEvent);
+            openModal('eventDetailsModal');
+        }
+
+        function addToGoogleCalendar(ev) {
+            // CORREÇÃO: Pega hora e data e constrói o formato exato ignorando o fuso universal (UTC)
+            const [ano, mes, dia] = ev.dataInicio.split('-');
+            const [hora, min] = ev.horario.split(':');
+            
+            const startDate = new Date(ano, mes - 1, dia, hora, min);
+            
+            // CORREÇÃO: Verificar se existe dataTermino. Se não, assume 2 horas depois.
+            let endDate;
+            if (ev.dataTermino) {
+                const [tAno, tMes, tDia] = ev.dataTermino.split('-');
+                // Usamos a hora de início para o término se a planilha não fornecer hora de término, adicionando 2h de segurança
+                endDate = new Date(tAno, tMes - 1, tDia, hora, min);
+                endDate.setHours(endDate.getHours() + 2);
+            } else {
+                endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000));
+            }
+
+            const formatGCal = (date) => {
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+            };
+
+            const startStr = formatGCal(startDate);
+            const endStr = formatGCal(endDate);
+
+            // Título detalhado para a Agenda (Tipo | Nível | Campo)
+            let titulo = `${ev.tipo} | ${ev.nivel} | ${ev.campo || ev.regional}`;
+            if (ev.congregacao) titulo += ` - ${ev.congregacao}`;
+
+            // Local detalhado para a Agenda (Maps)
+            let local = ev.campo || ev.regional;
+            if (ev.congregacao) local += ` - ${ev.congregacao}`;
+            if (ev.local) local += `, ${ev.local}`;
+
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao || "")}&location=${encodeURIComponent(local)}`;
+            window.open(url, '_blank');
+        }
+
+        window.addEventListener('DOMContentLoaded', carregarAgenda);
+    </script>
+</body>
+</html>
