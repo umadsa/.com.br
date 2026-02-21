@@ -50,8 +50,8 @@
                     <h1 class="text-base md:text-xl font-bold text-white leading-tight">UMADSA <span class="text-gold-500">AGENDA</span></h1>
                 </div>
             </div>
-            <a href="index1.html" class="text-gray-400 hover:text-gold-500 text-[10px] md:text-sm font-bold uppercase tracking-widest transition">
-                <i class="fa-solid fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Voltar ao Portal</span>
+            <a href="index.html" class="text-gray-400 hover:text-gold-500 text-[10px] md:text-sm font-bold uppercase tracking-widest transition">
+                <i class="fa-solid fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Voltar ao Site</span>
             </a>
         </div>
     </header>
@@ -60,7 +60,7 @@
         <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-8 gap-4 border-b border-gray-200 pb-6">
             <div class="mb-4 lg:mb-0">
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-black leading-tight">Cronograma Oficial</h2>
-                <p class="text-gray-500 mt-2">Acompanhe todos os eventos e trabalhos programados para o ano da UMADSA.</p>
+                <p class="text-gray-500 mt-2">Acompanhe todos os eventos ministeriais programados para o ano.</p>
             </div>
             
             <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
@@ -82,8 +82,7 @@
 
                 <select id="filterLevel" onchange="filterEvents()" class="w-full md:w-48 pl-4 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 text-gray-700">
                     <option value="">Qualquer Nível</option>
-                    <option value="Ministerial">Ministerial</option>
-                    <option value="Regional">Regional</option>
+                    <option value="Ministerial Regional">Ministerial Regional</option>
                     <option value="Campo">Campo</option>
                     <option value="Congregação">Congregação</option>
                     <option value="Geral">Geral</option>
@@ -135,7 +134,7 @@
                     <div class="w-10 h-10 rounded bg-dark border border-gray-700 flex items-center justify-center text-gold-500 shrink-0">
                         <i class="fa-solid fa-location-dot"></i>
                     </div>
-                    <div>
+                    <div class="flex-1 min-w-0">
                         <p class="text-gray-400 text-xs uppercase font-bold">Localização</p>
                         <p class="text-white font-medium leading-relaxed" id="modalEventLocation">Local</p>
                     </div>
@@ -213,24 +212,25 @@
                 }
                 const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
 
+                // CORREÇÃO: Adicionadas classes "flex-1 min-w-0" e "truncate" para evitar esticar no mobile
                 const row = `
-                    <div class="event-row bg-white border border-gray-200 border-l-4 border-l-gray-300 rounded-lg p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer" onclick="openEventDetails('${ev.id}')">
+                    <div class="group event-row bg-white border border-gray-200 border-l-4 border-l-gray-300 rounded-lg p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer" onclick="openEventDetails('${ev.id}')">
                         
-                        <div class="flex items-center gap-4 md:gap-6">
+                        <div class="flex items-center gap-4 md:gap-6 flex-1 min-w-0">
                             <div class="bg-gray-50 border border-gray-100 rounded-lg p-3 text-center min-w-[70px] shrink-0">
                                 <span class="block text-xs font-bold text-gray-400 uppercase leading-none mb-1">${month}</span>
                                 <span class="block text-2xl font-black text-black leading-none">${day}</span>
                             </div>
                             
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-gold-600 bg-gold-400/10 px-2 py-0.5 rounded">${ev.nivel}</span>
-                                <h3 class="text-lg font-bold text-black mt-1 leading-tight">${tituloDisplay}</h3>
-                                <p class="text-gray-500 text-sm mt-1 truncate max-w-[280px] md:max-w-md" title="${localDisplay}"><i class="fa-regular fa-clock mr-1"></i> ${ev.horario} <span class="mx-2 text-gray-300">|</span> <i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
+                            <div class="flex-1 min-w-0">
+                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-gold-600 bg-gold-400/10 px-2 py-0.5 rounded mb-1 truncate max-w-full">${ev.nivel}</span>
+                                <h3 class="text-lg font-bold text-black leading-tight truncate">${tituloDisplay}</h3>
+                                <p class="text-gray-500 text-sm mt-1 truncate w-full" title="${localDisplay}"><i class="fa-regular fa-clock mr-1"></i> ${ev.horario} <span class="mx-2 text-gray-300">|</span> <i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                             </div>
                         </div>
 
-                        <div class="hidden md:block shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-gold-50 hover:text-gold-600 transition">
+                        <div class="hidden md:flex shrink-0 items-center justify-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-gold-50 group-hover:text-gold-600 transition">
                                 <i class="fa-solid fa-chevron-right"></i>
                             </div>
                         </div>
@@ -300,14 +300,21 @@
         }
 
         function addToGoogleCalendar(ev) {
-            const d = ev.dataInicio.replace(/-/g, ''); 
-            const t = ev.horario.replace(':', '') + '00'; 
-            const startStr = `${d}T${t}`;
+            // CORREÇÃO: Pega hora e data e constrói o formato exato ignorando o fuso universal (UTC)
+            const [ano, mes, dia] = ev.dataInicio.split('-');
+            const [hora, min] = ev.horario.split(':');
             
-            const endDate = new Date(new Date(`${ev.dataInicio}T${ev.horario}:00`).getTime() + (2 * 60 * 60 * 1000));
-            const endD = endDate.toISOString().split('T')[0].replace(/-/g, '');
-            const endT = endDate.toTimeString().split('T')[1].replace(/:/g, '').substring(0, 6);
-            const endStr = `${endD}T${endT}`;
+            const startDate = new Date(ano, mes - 1, dia, hora, min);
+            const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // +2 horas
+
+            // Formata para YYYYMMDDTHHmmss no horário local (Evita erro de fuso)
+            const formatGCal = (date) => {
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+            };
+
+            const startStr = formatGCal(startDate);
+            const endStr = formatGCal(endDate);
 
             // Título detalhado para a Agenda
             let titulo = `${ev.tipo} | ${ev.nivel} | ${ev.campo || ev.regional}`;
@@ -324,7 +331,7 @@
                 local += `, ${ev.local}`;
             }
 
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao)}&location=${encodeURIComponent(local)}`;
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao || "")}&location=${encodeURIComponent(local)}`;
             window.open(url, '_blank');
         }
 
