@@ -441,7 +441,6 @@
                 const data = await res.json();
                 
                 if(data.result === 'success') {
-                    // Filtra apenas eventos de hoje em diante e ordena
                     const hoje = new Date();
                     hoje.setHours(0,0,0,0);
                     
@@ -449,7 +448,6 @@
                         .filter(ev => new Date(ev.dataInicio + "T00:00:00") >= hoje)
                         .sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
                     
-                    // Limita aos próximos 10 eventos no carrossel da home
                     if(agendaData.length > 10) agendaData = agendaData.slice(0, 10);
                     
                     renderAgenda();
@@ -483,9 +481,15 @@
                 const day = String(dateObj.getDate()).padStart(2, '0');
                 const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
 
-                // Formatar Título e Local
+                // 1. Formatar Título e Local com Campo e Congregação para o Card
                 const tituloDisplay = ev.tipo;
-                const localDisplay = ev.local ? ev.local : (ev.campo || ev.regional);
+                
+                let hierarquiaLocal = ev.campo;
+                if (ev.congregacao) {
+                    hierarquiaLocal += ` - ${ev.congregacao}`;
+                }
+                
+                const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
 
                 const card = `
                     <div class="event-card border border-gray-200 bg-white rounded-lg p-6 cursor-pointer relative group flex flex-col h-full" onclick="openEventDetails('${ev.id}')">
@@ -499,7 +503,7 @@
                         <h3 class="text-xl font-bold mb-2 text-black leading-tight">${tituloDisplay}</h3>
                         <p class="text-gray-500 text-xs mb-4 uppercase font-bold tracking-widest">${ev.nivel}</p>
                         <div class="mt-auto pt-4 border-t border-gray-100">
-                            <p class="text-xs font-bold text-gray-400 uppercase truncate"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
+                            <p class="text-xs font-bold text-gray-400 uppercase truncate" title="${localDisplay}"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                         </div>
                         
                         <div class="absolute inset-0 bg-gold-500 bg-opacity-0 group-hover:bg-opacity-10 transition rounded-lg flex items-center justify-center">
@@ -539,7 +543,15 @@
 
             const dateObj = new Date(selectedEvent.dataInicio + "T00:00:00");
             const dateStr = dateObj.toLocaleDateString('pt-BR');
-            const localDisplay = selectedEvent.local ? selectedEvent.local : `${selectedEvent.campo} (${selectedEvent.regional})`;
+            
+            // 2. Formatar Local no Modal com Campo, Congregação e Regional
+            let hierarquiaModal = selectedEvent.campo;
+            if (selectedEvent.congregacao) {
+                hierarquiaModal += ` - ${selectedEvent.congregacao}`;
+            }
+            hierarquiaModal += ` (${selectedEvent.regional})`;
+
+            const localDisplay = selectedEvent.local ? `${hierarquiaModal} | Endereço: ${selectedEvent.local}` : hierarquiaModal;
 
             document.getElementById('modalEventNivel').innerText = selectedEvent.nivel;
             document.getElementById('modalEventTitle').innerText = selectedEvent.tipo;
@@ -557,14 +569,24 @@
             const t = ev.horario.replace(':', '') + '00'; 
             const startStr = `${d}T${t}`;
             
-            // Calculando hora de término (+ 2 horas)
             const endDate = new Date(new Date(`${ev.dataInicio}T${ev.horario}:00`).getTime() + (2 * 60 * 60 * 1000));
             const endD = endDate.toISOString().split('T')[0].replace(/-/g, '');
             const endT = endDate.toTimeString().split('T')[1].replace(/:/g, '').substring(0, 6);
             const endStr = `${endD}T${endT}`;
 
-            const titulo = `${ev.tipo} - ${ev.nivel}`;
-            const local = ev.local || ev.campo;
+            // 3. Título e Local detalhados para a Agenda
+            let titulo = `${ev.tipo} | ${ev.nivel} | ${ev.campo}`;
+            if (ev.congregacao) {
+                titulo += ` - ${ev.congregacao}`;
+            }
+
+            let local = ev.campo;
+            if (ev.congregacao) {
+                local += ` - ${ev.congregacao}`;
+            }
+            if (ev.local) {
+                local += `, ${ev.local}`;
+            }
 
             const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titulo)}&dates=${startStr}/${endStr}&details=${encodeURIComponent(ev.descricao)}&location=${encodeURIComponent(local)}`;
             window.open(url, '_blank');
