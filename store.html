@@ -38,7 +38,7 @@
         }
 
         .form-input {
-            width: 100%; padding: 0.75rem 1rem; background-color: #000000; border: 1px solid #3f3f46; 
+            width: 100%; padding: 0.75rem 1rem; background-color: #09090b; border: 1px solid #27272a; 
             color: #ffffff; border-radius: 0.5rem; outline: none; transition: all 0.3s;
         }
         .form-input:focus { border-color: #f59e0b; box-shadow: 0 0 0 1px #f59e0b; }
@@ -46,91 +46,106 @@
 </head>
 <body class="relative min-h-screen flex flex-col overflow-x-hidden">
 
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-900/20 via-zinc-950 to-black z-0 pointer-events-none"></div>
-    <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-amber-600/10 rounded-full blur-[100px] pulse-slow z-0 pointer-events-none"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[30rem] h-[30rem] bg-amber-500/10 rounded-full blur-[80px] pulse-slow z-0 pointer-events-none" style="animation-delay: 2s;"></div>
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-900/20 via-zinc-950 to-black"></div>
+        <div class="absolute top-[-10%] left-[-20%] md:left-[-10%] w-[150vw] md:w-[40rem] h-[150vw] md:h-[40rem] bg-amber-600/10 rounded-full blur-[80px] md:blur-[100px] pulse-slow"></div>
+        <div class="absolute bottom-[-10%] right-[-20%] md:right-[-10%] w-[120vw] md:w-[30rem] h-[120vw] md:h-[30rem] bg-amber-500/10 rounded-full blur-[60px] md:blur-[80px] pulse-slow" style="animation-delay: 2s;"></div>
+    </div>
 
-    <header class="relative z-10 border-b border-zinc-800 bg-black/50 backdrop-blur-md">
-        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 border-2 border-amber-500 rounded flex items-center justify-center text-amber-500 font-bold text-xl">U</div>
-                <div>
-                    <h1 class="text-xl font-bold text-white leading-tight">UMADSA <span class="text-amber-500">STORE</span></h1>
-                </div>
-            </div>
-            <a href="index.html" class="text-zinc-400 hover:text-amber-500 text-sm font-bold uppercase tracking-wider transition">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Voltar ao Portal
-            </a>
-        </div>
-    </header>
-
-    <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div class="max-w-3xl w-full text-center fade-in-up">
-            
-            <div class="inline-block border border-amber-500 text-amber-500 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6 bg-amber-500/10">
-                Lançamento em Breve
-            </div>
-            
-            <h2 class="text-4xl md:text-6xl font-serif font-bold text-white mb-4 leading-tight">
-                Vista a Sua <br><span class="text-amber-500">Chamada</span>
-            </h2>
-            
-            <p class="text-lg text-zinc-400 mb-10 max-w-xl mx-auto">
-                A loja oficial da UMADSA está chegando. Vestuário, bíblias, utilidades e materiais exclusivos para os HOMENS e LIDERANÇA.
-            </p>
-
-            <div class="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 p-8 md:p-10 rounded-2xl shadow-[0_0_40px_rgba(212,175,55,0.1)] relative overflow-hidden text-left max-w-2xl mx-auto">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600"></div>
-
-                <div id="formSection">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-white mb-2"><i class="fa-solid fa-ticket text-amber-500 mr-2"></i> Garanta seu Cupom Exclusivo</h3>
-                        <p class="text-sm text-zinc-400">Inscreva-se na nossa lista VIP para ser avisado do lançamento e receber um cupom de desconto especial para a sua primeira compra.</p>
+    <div class="relative z-10 flex flex-col min-h-screen">
+        <header class="border-b border-zinc-800 bg-black/50 backdrop-blur-md">
+            <div class="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
+                
+                <div class="flex items-center gap-3">
+                    <img src="https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png" alt="Brasão UMADSA" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+                    <div>
+                        <h1 class="text-base md:text-xl font-bold text-white leading-tight">UMADSA <span class="text-amber-500">STORE</span></h1>
                     </div>
+                </div>
+                
+                <a href="index1.html" class="text-zinc-400 hover:text-amber-500 text-[10px] md:text-sm font-bold uppercase tracking-widest transition">
+                    <i class="fa-solid fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Voltar ao Portal</span>
+                </a>
+            </div>
+        </header>
 
-                    <form id="leadForm" onsubmit="enviarLead(event)" class="space-y-4">
+        <main class="flex-1 flex flex-col items-center justify-center px-4 py-12">
+            <div class="max-w-3xl w-full text-center fade-in-up">
+                
+                <div class="inline-block border border-amber-500 text-amber-500 px-4 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6 bg-amber-500/10">
+                    Lançamento Oficial em Breve
+                </div>
+                
+                <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 leading-tight">
+                    Vista a Sua <br><span class="text-amber-500">Chamada</span>
+                </h2>
+                
+                <p class="text-base md:text-lg text-zinc-400 mb-10 max-w-xl mx-auto leading-relaxed px-2">
+                    A loja oficial da UMADSA está chegando. Vestuário, bíblias, utilidades e materiais exclusivos para HOMENS e LIDERANÇA.
+                </p>
+
+                <button onclick="openLeadModal()" class="bg-amber-500 text-black px-6 py-4 md:px-10 md:py-5 rounded-full font-bold text-xs md:text-sm uppercase tracking-widest hover:bg-amber-600 transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.3)] flex items-center gap-3 mx-auto w-full max-w-xs md:max-w-md justify-center">
+                    <i class="fa-solid fa-ticket text-lg md:text-xl"></i> Receber Cupom VIP
+                </button>
+
+            </div>
+        </main>
+
+        <footer class="border-t border-zinc-900 bg-black py-6 text-center text-xs text-zinc-600">
+            <p>© 2026 UMADSA Store. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+
+    <div id="leadModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] hidden justify-center items-center p-4">
+        <div class="bg-zinc-950 border border-amber-500 p-6 md:p-8 rounded-2xl w-full max-w-md relative shadow-[0_0_40px_rgba(212,175,55,0.15)] transform scale-95 opacity-0 transition-all" id="leadModalContent">
+            
+            <button onclick="closeLeadModal()" class="absolute top-4 right-4 text-zinc-500 hover:text-amber-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+
+            <div id="formSection">
+                <div class="text-center mb-6 mt-2">
+                    <h3 class="text-2xl font-serif font-bold text-white mb-2"><i class="fa-solid fa-ticket text-amber-500 mr-2"></i> Cupom Exclusivo</h3>
+                    <p class="text-xs text-zinc-400">Inscreva-se para ser avisado do lançamento e garantir desconto na primeira compra.</p>
+                </div>
+
+                <form id="leadForm" onsubmit="enviarLead(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1 ml-1 tracking-widest">Nome Completo</label>
+                        <input type="text" id="leadNome" required class="form-input" placeholder="Seu nome">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1 ml-1">Nome Completo</label>
-                            <input type="text" id="leadNome" required class="form-input" placeholder="Seu nome">
+                            <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1 ml-1 tracking-widest">E-mail</label>
+                            <input type="email" id="leadEmail" required class="form-input" placeholder="seu@email.com">
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1 ml-1">E-mail</label>
-                                <input type="email" id="leadEmail" required class="form-input" placeholder="seu@email.com">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1 ml-1">WhatsApp</label>
-                                <input type="tel" id="leadPhone" required class="form-input" placeholder="(11) 99999-9999">
-                            </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-zinc-400 uppercase mb-1 ml-1 tracking-widest">WhatsApp</label>
+                            <input type="tel" id="leadPhone" required class="form-input" placeholder="(11) 99999-9999">
                         </div>
-                        <button type="submit" id="btnSubmit" class="w-full mt-6 bg-amber-500 text-black font-bold py-4 rounded-lg hover:bg-amber-600 transition uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
-                            Inscrever-se e Receber Cupom
-                        </button>
-                    </form>
-                </div>
-
-                <div id="successSection" class="hidden text-center py-8">
-                    <div class="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa-solid fa-check text-4xl text-amber-500"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Você está na Lista VIP!</h3>
-                    <p class="text-zinc-400">Tudo certo. Fique de olho no seu WhatsApp e E-mail. Enviaremos o seu cupom exclusivo no dia do grande lançamento!</p>
+                    <button type="submit" id="btnSubmit" class="w-full mt-4 bg-amber-500 text-black font-bold py-4 rounded-lg hover:bg-amber-600 transition uppercase tracking-widest flex items-center justify-center gap-2">
+                        Garantir Vaga
+                    </button>
+                </form>
+            </div>
+
+            <div id="successSection" class="hidden text-center py-6">
+                <div class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-check text-3xl text-amber-500"></i>
                 </div>
+                <h3 class="text-xl font-bold text-white mb-2">Você está na Lista VIP!</h3>
+                <p class="text-xs text-zinc-400 mb-6">Tudo certo. Fique de olho no seu WhatsApp. Enviaremos o cupom no dia do lançamento!</p>
+                <button onclick="closeLeadModal()" class="bg-zinc-800 text-white font-bold py-2 px-6 rounded-lg hover:bg-zinc-700 transition text-sm">Fechar</button>
             </div>
         </div>
-    </main>
+    </div>
 
-    <footer class="relative z-10 border-t border-zinc-900 bg-black py-6 text-center text-xs text-zinc-600">
-        <p>© 2026 UMADSA Store. Todos os direitos reservados.</p>
-    </footer>
-
-    <div id="duplicateModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] hidden justify-center items-center p-4">
-        <div class="bg-zinc-950 border border-amber-500 rounded-2xl p-8 w-full max-w-md shadow-[0_0_40px_rgba(212,175,55,0.2)] text-center relative transform transition-all scale-95 opacity-0" id="duplicateModalContent">
-            <button onclick="closeDuplicateModal()" class="absolute top-4 right-4 text-zinc-500 hover:text-amber-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+    <div id="duplicateModal" class="fixed inset-0 bg-black/95 backdrop-blur-sm z-[110] hidden justify-center items-center p-4">
+        <div class="bg-zinc-950 border border-amber-500 rounded-2xl p-8 w-full max-w-sm shadow-[0_0_50px_rgba(212,175,55,0.2)] text-center relative transform scale-95 opacity-0 transition-all" id="duplicateModalContent">
             
             <i class="fa-solid fa-face-smile-wink text-6xl text-amber-500 mb-4"></i>
             <h3 class="text-2xl font-serif font-bold text-white mb-2">Vigia, Varão! 👀</h3>
-            <p class="text-zinc-400 mb-8 text-sm leading-relaxed">Parece que esse e-mail ou WhatsApp já está cadastrado. Você já garantiu o seu lugar na fila e o seu cupom VIP. Deixa espaço para os outros irmãos!</p>
+            <p class="text-zinc-400 mb-8 text-sm leading-relaxed">Parece que esse e-mail ou WhatsApp já está cadastrado. Você já garantiu o seu lugar na fila e o seu cupom VIP. Deixe espaço para os outros irmãos!</p>
             
             <button onclick="closeDuplicateModal()" class="w-full bg-amber-500 text-black font-bold py-3 rounded-lg hover:bg-amber-600 transition uppercase tracking-widest">
                 Amém, Entendi!
@@ -139,8 +154,59 @@
     </div>
 
     <script>
-        // COLOQUE AQUI A NOVA URL DO SEU GOOGLE APPS SCRIPT
+        // COLOQUE AQUI A URL DO SEU GOOGLE APPS SCRIPT
         const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbxO4m-m2NljficH_zCbpHyPg6pgolxBh6KmfdgArfcszhxC0L4g3E0baVLahGwNFM6z/exec";
+
+        function openLeadModal() {
+            const modal = document.getElementById('leadModal');
+            const content = document.getElementById('leadModalContent');
+            
+            // Reseta para o form em caso de reabertura
+            document.getElementById('formSection').classList.remove('hidden');
+            document.getElementById('successSection').classList.add('hidden');
+            document.getElementById('leadForm').reset();
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeLeadModal() {
+            const modal = document.getElementById('leadModal');
+            const content = document.getElementById('leadModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function openDuplicateModal() {
+            closeLeadModal(); // Esconde o modal de cadastro primeiro
+            const modal = document.getElementById('duplicateModal');
+            const content = document.getElementById('duplicateModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeDuplicateModal() {
+            const modal = document.getElementById('duplicateModal');
+            const content = document.getElementById('duplicateModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
 
         async function enviarLead(e) {
             e.preventDefault();
@@ -148,7 +214,7 @@
             const btn = document.getElementById('btnSubmit');
             const originalText = btn.innerHTML;
             
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...';
             btn.disabled = true;
 
             const payload = {
@@ -173,7 +239,7 @@
                     document.getElementById('successSection').classList.remove('hidden');
                     document.getElementById('successSection').classList.add('fade-in-up');
                 } else if (data.result === "duplicate") {
-                    openDuplicateModal(); // Abre o modal engraçado
+                    openDuplicateModal(); // Abre o modal engraçado "Vigia Varão"
                 } else {
                     alert("Ops! Houve um problema ao registrar: " + data.message);
                 }
@@ -184,29 +250,6 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
-        }
-
-        // Funções do Modal "Vigia Varão"
-        function openDuplicateModal() {
-            const modal = document.getElementById('duplicateModal');
-            const content = document.getElementById('duplicateModalContent');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeDuplicateModal() {
-            const modal = document.getElementById('duplicateModal');
-            const content = document.getElementById('duplicateModalContent');
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
         }
     </script>
 </body>
