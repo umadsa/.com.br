@@ -99,6 +99,16 @@
         #agendaGrid {
             word-break: break-word;
         }
+
+        /* Ajuste para selects no modal para manter estilo */
+        select.form-input { 
+            appearance: none; 
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d4af37' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); 
+            background-position: right 0.5rem center; 
+            background-repeat: no-repeat; 
+            background-size: 1.5em 1.5em; 
+            padding-right: 2.5rem; 
+        }
     </style>
 </head>
 <body class="bg-dark text-gray-200">
@@ -288,23 +298,52 @@
                 <h3 class="text-2xl font-bold font-serif text-white">Candidato a Capelão</h3>
                 <p class="text-gray-400 text-sm mt-1">Preencha para análise da diretoria.</p>
             </div>
-            <form onsubmit="simularEnvio(event, 'capelaniaModal')">
+            <form id="formCapelania" onsubmit="enviarCapelania(event)">
                 <div class="space-y-3 text-sm">
-                    <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Nome Completo">
+                    <input type="text" id="capelaniaNome" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Nome Completo">
+                    
+                    <input type="tel" id="capelaniaTel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="WhatsApp (DDD) 99999-9999" onkeyup="mascaraTelefone(event)">
+                    
                     <div class="grid grid-cols-2 gap-3">
-                        <input type="tel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="WhatsApp">
-                        <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Congregação">
+                        <select id="capelaniaCampo" required onchange="loadCongregacoesCapelania()" class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
+                            <option value="" disabled selected>Carregando Campos...</option>
+                        </select>
+                        <select id="capelaniaCongregacao" required disabled class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
+                            <option value="" disabled selected>Congregação...</option>
+                        </select>
                     </div>
-                    <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none">
-                        <option value="">Área de Interesse...</option>
+
+                    <select id="capelaniaArea" required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
+                        <option value="" disabled selected>Área de Interesse...</option>
                         <option value="hospitalar">Capelania Hospitalar</option>
                         <option value="prisional">Capelania Prisional</option>
                         <option value="escolar">Capelania Escolar</option>
                     </select>
-                    <textarea rows="2" class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Por que deseja ser capelão? (Opcional)"></textarea>
+
+                    <textarea id="capelaniaMotivacao" rows="2" class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="Por que deseja ser capelão? (Opcional)"></textarea>
                 </div>
-                <button type="submit" class="w-full mt-6 bg-transparent border border-gold-500 text-gold-500 font-bold py-3 rounded hover:bg-gold-500 hover:text-black transition">Enviar Cadastro</button>
+                <button type="submit" id="btnCapelaniaSubmit" class="w-full mt-6 bg-transparent border border-gold-500 text-gold-500 font-bold py-3 rounded hover:bg-gold-500 hover:text-black transition">Enviar Cadastro</button>
             </form>
+        </div>
+    </div>
+
+    <div id="successCapelaniaModal" class="modal-overlay">
+        <div class="modal-content border-t-4 border-gold-500 text-center">
+            <button onclick="closeModal('successCapelaniaModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gold-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <i class="fa-solid fa-hands-praying text-5xl text-gold-500 mb-4"></i>
+            <h3 class="text-2xl font-serif font-bold text-white mb-2">Glória a Deus pela sua vida!</h3>
+            <p class="text-gray-300 mb-6 text-sm">Agradecemos imensamente o seu interesse em se tornar um Capelão e fazer a diferença através deste ministério.</p>
+            
+            <div class="bg-dark p-4 rounded-lg border border-gray-800 mb-6 text-sm text-gray-400 text-left">
+                <p><i class="fa-solid fa-bullhorn text-gold-500 mr-2"></i> <strong>Atenção:</strong> O Campo que obtiver o maior número de inscritos (mínimo de 20 interessados) <strong>receberá o curso de Capelania presencialmente na sua própria congregação Sede</strong>, dispensando a necessidade de deslocamento até a Matriz Central!</p>
+            </div>
+
+            <p class="text-white font-bold mb-4 text-sm">Que tal convidar outros irmãos do seu Campo para batermos essa meta?</p>
+            
+            <button onclick="compartilharWhatsAppCapelania()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-500 transition flex items-center justify-center gap-2 uppercase tracking-wide">
+                <i class="fa-brands fa-whatsapp text-xl"></i> Convidar no WhatsApp
+            </button>
         </div>
     </div>
 
@@ -318,8 +357,8 @@
             <form onsubmit="simularEnvio(event, 'alistamentoModal')">
                 <div class="space-y-3 text-sm">
                     <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Nome">
-                    <input type="tel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="WhatsApp">
-                    <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500">
+                    <input type="tel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="WhatsApp" onkeyup="mascaraTelefone(event)">
+                    <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 form-input">
                         <option value="">Departamento Desejado...</option>
                         <option>Comunicação e Mídia</option>
                         <option>Intercessão</option>
@@ -344,7 +383,7 @@
                 <div class="space-y-3 text-sm">
                     <input type="text" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500" placeholder="Nome do Líder">
                     <div class="grid grid-cols-2 gap-3">
-                        <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500">
+                        <select required class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 form-input">
                             <option value="">Cargo...</option>
                             <option>Líder de Campo</option>
                             <option>Líder de Congregação</option>
@@ -404,6 +443,176 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) event.target.style.display = "none"; }
 
+        // ==========================================
+        // CONFIGURAÇÕES DAS APIs
+        // ==========================================
+        
+        // 1. API DA AGENDA E HIERARQUIA
+        const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec"; 
+        
+        // 2. NOVA API DA CAPELANIA
+        const API_CAPELANIA = "https://script.google.com/macros/s/AKfycbwj7piuiqToBuYjzKob73dEjFeUZ23Ny7zGh_glOxpTdCkHWsvMD9NgWBb296-K-JUZ/exec";
+        
+        // TOKEN OFUSCADO EM BASE64 (Segurança para o envio)
+        // O valor real é: 'umadsa2026tokendeseguranca'
+        const _k = "dW1hZHNhMjAyNnRva2VuZGVzZWd1cmFuY2E=";
+
+
+        // ==========================================
+        // MÁSCARA PARA TELEFONE WHATSAPP
+        // ==========================================
+        function mascaraTelefone(event) {
+            let input = event.target;
+            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            if (value.length > 11) value = value.slice(0, 11); // Limita a 11 dígitos
+
+            // Aplica a formatação (xx) xxxxx-xxxx
+            if (value.length > 2) {
+                value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            }
+            if (value.length > 10) {
+                value = `${value.slice(0, 10)}-${value.slice(10)}`;
+            }
+            input.value = value;
+        }
+
+        // ==========================================
+        // LÓGICA DO FORMULÁRIO DE CAPELANIA E COMPARTILHAR WHATSAPP
+        // ==========================================
+        let dbHierarquia = {}; // Salva a hierarquia para uso nos dropdowns
+
+        async function enviarCapelania(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnCapelaniaSubmit');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            btn.disabled = true;
+
+            const payload = {
+                authToken: atob(_k), // Desofusca o token aqui
+                action: "cadastroCapelania",
+                nome: document.getElementById('capelaniaNome').value,
+                telefone: document.getElementById('capelaniaTel').value,
+                campo: document.getElementById('capelaniaCampo').value,
+                congregacao: document.getElementById('capelaniaCongregacao').value,
+                areaInteresse: document.getElementById('capelaniaArea').value,
+                motivacao: document.getElementById('capelaniaMotivacao').value
+            };
+
+            try {
+                const response = await fetch(API_CAPELANIA, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+                
+                const resData = await response.json();
+
+                if (resData.status === 'success') {
+                    // Limpa e Fecha form
+                    closeModal('capelaniaModal');
+                    document.getElementById('formCapelania').reset();
+                    document.getElementById('capelaniaCongregacao').disabled = true;
+                    document.getElementById('capelaniaCongregacao').classList.add('opacity-50');
+                    
+                    // ABRE NOVO MODAL DE SUCESSO (Vigia Varão / Parabéns)
+                    openModal('successCapelaniaModal');
+                } else {
+                    alert("Erro ao enviar: " + (resData.message || "Erro desconhecido."));
+                }
+            } catch (error) {
+                alert("Erro de conexão com o servidor. Tente novamente mais tarde.");
+                console.error(error);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Função de acionar Whatsapp a partir do Modal de Sucesso da Capelania
+        function compartilharWhatsAppCapelania() {
+            const baseUrl = window.location.href.split('#')[0]; // URL limpa do portal
+            const textoMensagem = `*Ei vaso, vamos fazer o IDE juntos!* 🔥\n\nAcabei de fazer a minha inscrição para o Ministério de Capelania da UMADSA.\n\nSabia que se o nosso Campo atingir a meta de *20 inscritos*, o curso de capelania será realizado presencialmente na nossa congregação sede? E não vamos precisar ir até a Matriz!\n\nFaça sua inscrição também, garanta a sua vaga e vamos bater essa meta pelo nosso Campo:\n\n👉 ${baseUrl}#capelania`;
+            
+            const whatsappLink = `https://wa.me/?text=${encodeURIComponent(textoMensagem)}`;
+            window.open(whatsappLink, '_blank');
+        }
+
+        // ==========================================
+        // BUSCAR E POPULAR DROPDOWNS DE CAPELANIA
+        // ==========================================
+        async function fetchHierarquiaCapelania() {
+            try {
+                // Utiliza a API da Agenda que já tem a função get_hierarquia
+                const res = await fetch(GOOGLE_API_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'get_hierarquia' })
+                });
+                const data = await res.json();
+                
+                if (data.result === 'success') {
+                    dbHierarquia = data.hierarquia;
+                    loadCamposCapelania();
+                }
+            } catch (err) {
+                console.error("Erro ao buscar a hierarquia:", err);
+            }
+        }
+
+        function loadCamposCapelania() {
+            const selectCampo = document.getElementById('capelaniaCampo');
+            selectCampo.innerHTML = '<option value="" disabled selected>Selecione o Campo...</option>';
+            
+            // Reúne todos os campos de todas as regionais
+            let todosCampos = [];
+            Object.values(dbHierarquia).forEach(regional => {
+                todosCampos = todosCampos.concat(Object.keys(regional));
+            });
+            
+            // Remove duplicados e ordena alfabeticamente
+            todosCampos = [...new Set(todosCampos)].sort();
+
+            todosCampos.forEach(campo => {
+                selectCampo.innerHTML += `<option value="${campo}">${campo}</option>`;
+            });
+        }
+
+        function loadCongregacoesCapelania() {
+            const campoSelecionado = document.getElementById('capelaniaCampo').value;
+            const selectCong = document.getElementById('capelaniaCongregacao');
+            
+            selectCong.innerHTML = '<option value="" disabled selected>Selecione a Congregação...</option>';
+            
+            let congregacoesEncontradas = [];
+            
+            // Procura o campo selecionado em todas as regionais
+            Object.values(dbHierarquia).forEach(regional => {
+                if (regional[campoSelecionado]) {
+                    congregacoesEncontradas = congregacoesEncontradas.concat(regional[campoSelecionado]);
+                }
+            });
+
+            if (congregacoesEncontradas.length > 0) {
+                selectCong.disabled = false;
+                selectCong.classList.remove('opacity-50', 'cursor-not-allowed');
+                
+                congregacoesEncontradas.sort().forEach(cong => {
+                    selectCong.innerHTML += `<option value="${cong}">${cong}</option>`;
+                });
+            } else {
+                selectCong.disabled = true;
+                selectCong.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // ==========================================
+        // FUNÇÕES SIMULADAS (PARA OS OUTROS MODAIS)
+        // ==========================================
         function simularEnvio(e, modalId) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
@@ -421,8 +630,9 @@
             }, 1500);
         }
 
-        const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbwjVlfLhiHXKHwLpDdKBCQTXkE4PNfvIbaUr12nECFaJCxOJCxYYswVlgCoYDVvCGTMAQ/exec"; 
-
+        // ==========================================
+        // LÓGICA DA AGENDA DINÂMICA
+        // ==========================================
         let agendaData = [];
         let currentAgendaPage = 0;
 
@@ -441,27 +651,35 @@
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify({ action: 'read' })
                 });
+                
                 const data = await res.json();
+                
                 if(data.result === 'success') {
                     const hoje = new Date();
                     hoje.setHours(0,0,0,0);
+                    
                     agendaData = data.events
                         .filter(ev => new Date(ev.dataInicio + "T00:00:00") >= hoje)
                         .sort((a,b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+                    
                     if(agendaData.length > 12) agendaData = agendaData.slice(0, 12);
+                    
                     renderAgenda();
                 } else {
-                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Erro ao carregar agenda.</div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Erro ao carregar agenda: ${data.message}</div>`;
                 }
             } catch(e) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Falha de conexão.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-500 font-bold">Falha de conexão com a Agenda Oficial. Verifique a URL da API.</div>`;
+                console.error(e);
             }
         }
 
         function renderAgenda() {
             const grid = document.getElementById('agendaGrid');
             grid.innerHTML = '';
+            
             const eventsPerPage = getEventsPerPage();
+
             if(agendaData.length === 0) {
                 grid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 font-medium">Nenhum evento futuro programado no momento.</div>';
                 document.getElementById('btnPrevEvents').disabled = true;
@@ -469,6 +687,7 @@
                 document.getElementById('agendaCounter').innerText = `Pág. 0 de 0`;
                 return;
             }
+
             const startIndex = currentAgendaPage * eventsPerPage;
             const eventsToShow = agendaData.slice(startIndex, startIndex + eventsPerPage);
 
@@ -477,10 +696,16 @@
                 const day = String(dateObj.getDate()).padStart(2, '0');
                 const month = dateObj.toLocaleString('pt-br', { month: 'short' }).replace('.', '').toUpperCase();
 
+                const tituloDisplay = ev.tipo;
+                
                 let hierarquiaLocal = ev.campo || ev.regional;
-                if (ev.congregacao) hierarquiaLocal += ` - ${ev.congregacao}`;
+                if (ev.congregacao) {
+                    hierarquiaLocal += ` - ${ev.congregacao}`;
+                }
+                
                 const localDisplay = ev.local ? `${hierarquiaLocal} | ${ev.local}` : hierarquiaLocal;
 
+                // CARD TOTALMENTE RESPONSIVO E COM TRUNCATE PARA NÃO ESTICAR O LAYOUT
                 const card = `
                     <div class="event-card border border-gray-200 bg-white rounded-lg p-6 cursor-pointer relative group flex flex-col h-full mx-auto w-full max-w-sm md:max-w-none" onclick="openEventDetails('${ev.id}')">
                         <div class="text-gold-500 font-bold text-lg mb-3 flex items-center gap-2">
@@ -490,11 +715,12 @@
                             </div>
                             <span class="text-sm font-medium text-gray-500 ml-1"><i class="fa-regular fa-clock"></i> ${ev.horario}</span>
                         </div>
-                        <h3 class="text-xl font-bold mb-2 text-black leading-tight">${ev.tipo}</h3>
+                        <h3 class="text-xl font-bold mb-2 text-black leading-tight">${tituloDisplay}</h3>
                         <p class="text-gray-500 text-xs mb-4 uppercase font-bold tracking-widest bg-gray-100 inline-block px-2 py-1 rounded">${ev.nivel}</p>
-                        <div class="mt-auto pt-4 border-t border-gray-100">
+                        <div class="mt-auto pt-4 border-t border-gray-100 flex-1 min-w-0">
                             <p class="text-xs font-bold text-gray-400 uppercase truncate" title="${localDisplay}"><i class="fa-solid fa-location-dot mr-1 text-gold-500"></i> ${localDisplay}</p>
                         </div>
+                        
                         <div class="absolute inset-0 bg-gold-500 bg-opacity-0 group-hover:bg-opacity-10 transition rounded-lg flex items-center justify-center">
                             <span class="opacity-0 group-hover:opacity-100 bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition shadow-xl">Ver Detalhes</span>
                         </div>
@@ -509,9 +735,25 @@
             document.getElementById('agendaCounter').innerText = `Pág. ${currentAgendaPage + 1} de ${totalPages}`;
         }
 
-        function nextEvents() { if ((currentAgendaPage + 1) * getEventsPerPage() < agendaData.length) { currentAgendaPage++; renderAgenda(); } }
-        function prevEvents() { if (currentAgendaPage > 0) { currentAgendaPage--; renderAgenda(); } }
-        window.addEventListener('resize', () => { currentAgendaPage = 0; renderAgenda(); });
+        function nextEvents() {
+            if ((currentAgendaPage + 1) * getEventsPerPage() < agendaData.length) {
+                currentAgendaPage++;
+                renderAgenda();
+            }
+        }
+
+        function prevEvents() {
+            if (currentAgendaPage > 0) {
+                currentAgendaPage--;
+                renderAgenda();
+            }
+        }
+
+        // Recalcular no resize da janela
+        window.addEventListener('resize', () => {
+            currentAgendaPage = 0;
+            renderAgenda();
+        });
 
         let selectedEvent = null;
 
@@ -523,7 +765,9 @@
             const dateStr = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
             
             let hierarquiaModal = selectedEvent.campo || "Geral";
-            if (selectedEvent.congregacao) hierarquiaModal += ` - ${selectedEvent.congregacao}`;
+            if (selectedEvent.congregacao) {
+                hierarquiaModal += ` - ${selectedEvent.congregacao}`;
+            }
             hierarquiaModal += ` (${selectedEvent.regional})`;
 
             const localDisplay = selectedEvent.local ? `${hierarquiaModal} | Endereço: ${selectedEvent.local}` : hierarquiaModal;
@@ -535,21 +779,19 @@
             document.getElementById('modalEventDesc').innerText = selectedEvent.descricao || "Nenhum detalhe adicional informado.";
 
             document.getElementById('btnAddToCalendar').onclick = () => addToGoogleCalendar(selectedEvent);
+
             openModal('eventDetailsModal');
         }
 
         function addToGoogleCalendar(ev) {
-            // CORREÇÃO: Pega hora e data e constrói o formato exato ignorando o fuso universal (UTC)
             const [ano, mes, dia] = ev.dataInicio.split('-');
             const [hora, min] = ev.horario.split(':');
             
             const startDate = new Date(ano, mes - 1, dia, hora, min);
             
-            // CORREÇÃO: Verificar se existe dataTermino. Se não, assume 2 horas depois.
             let endDate;
             if (ev.dataTermino) {
                 const [tAno, tMes, tDia] = ev.dataTermino.split('-');
-                // Usamos a hora de início para o término se a planilha não fornecer hora de término, adicionando 2h de segurança
                 endDate = new Date(tAno, tMes - 1, tDia, hora, min);
                 endDate.setHours(endDate.getHours() + 2);
             } else {
@@ -564,11 +806,9 @@
             const startStr = formatGCal(startDate);
             const endStr = formatGCal(endDate);
 
-            // Título detalhado para a Agenda (Tipo | Nível | Campo)
             let titulo = `${ev.tipo} | ${ev.nivel} | ${ev.campo || ev.regional}`;
             if (ev.congregacao) titulo += ` - ${ev.congregacao}`;
 
-            // Local detalhado para a Agenda (Maps)
             let local = ev.campo || ev.regional;
             if (ev.congregacao) local += ` - ${ev.congregacao}`;
             if (ev.local) local += `, ${ev.local}`;
@@ -577,7 +817,11 @@
             window.open(url, '_blank');
         }
 
-        window.addEventListener('DOMContentLoaded', carregarAgenda);
+        // Init Geral
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarAgenda();
+            fetchHierarquiaCapelania(); // Busca os campos para o modal de capelania
+        });
     </script>
 </body>
 </html>
