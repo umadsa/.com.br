@@ -394,8 +394,8 @@
                     
                     <input type="tel" id="capelaniaTel" required class="w-full p-3 bg-black border border-gray-700 rounded text-white focus:border-gold-500 focus:outline-none" placeholder="WhatsApp (DDD) 99999-9999" onkeyup="mascaraTelefone(event)">
                     
-                    <div class="grid grid-cols-2 gap-3">
-                        <select id="capelaniaCampo" required onchange="loadCongregacoesCapelania()" class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
+                        <div class="grid grid-cols-2 gap-3">
+                        <select id="capelaniaCampo" required onchange="loadCongregacoesDropdown('capelaniaCampo', 'capelaniaCongregacao')" class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
                             <option value="" disabled selected>Carregando Campos...</option>
                         </select>
                         <select id="capelaniaCongregacao" required disabled class="w-full p-3 bg-black border border-gray-700 rounded text-gray-400 focus:border-gold-500 focus:outline-none form-input">
