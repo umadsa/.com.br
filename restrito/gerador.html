@@ -83,30 +83,43 @@
             }
 
             try {
-                // Chamada via GET para o novo doGet no Backend
                 const response = await fetch(`${API_URL}?action=buscarLider&idLider=${id}&authToken=umadsa2026tokendeseguranca`);
                 const result = await response.json();
 
                 if (result.status === 'success') {
                     const data = result.data;
                     
+                    // 1. Preenche os textos IMEDIATAMENTE
                     document.getElementById('fNome').innerText = data.nome;
                     document.getElementById('fCargo').innerText = data.cargo;
                     document.getElementById('vNasc').innerText = data.nascimento;
                     document.getElementById('vCong').innerText = data.congregacao;
                     
-                    // Formata ID: 1234 5678...
                     const idLivre = data.id.replace("LID-", "");
                     document.getElementById('fID').innerText = idLivre.replace(/(\d{4})/g, '$1 ').trim();
                     
-                    // Foto
+                    // 2. Tenta carregar a foto, mas libera o card de qualquer forma
                     const img = document.getElementById('fFoto');
-                    img.src = data.urlFoto;
+                    img.crossOrigin = "anonymous"; // Necessário para o html2canvas não "sujar" o PDF
+                    
+                    // Se a foto carregar, ótimo. Se der erro ou demorar, liberamos o card assim mesmo após 2 segundos
+                    const timeoutFoto = setTimeout(() => {
+                        finalizarCarregamento();
+                    }, 2500);
+
                     img.onload = () => {
-                        document.getElementById('status').classList.add('hidden');
-                        document.getElementById('printArea').style.opacity = "1";
-                        document.getElementById('btnPdf').classList.remove('hidden');
+                        clearTimeout(timeoutFoto);
+                        finalizarCarregamento();
                     };
+
+                    img.onerror = () => {
+                        console.warn("Não foi possível carregar a foto do Drive.");
+                        img.src = "https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png"; // Fallback para o Brasão
+                        finalizarCarregamento();
+                    };
+
+                    img.src = data.urlFoto;
+
                 } else {
                     document.getElementById('status').innerText = "Líder não encontrado no sistema.";
                 }
@@ -116,6 +129,14 @@
             }
         }
 
+        // Função auxiliar para mostrar o card na tela
+        function finalizarCarregamento() {
+            document.getElementById('status').classList.add('hidden');
+            const printArea = document.getElementById('printArea');
+            printArea.classList.remove('opacity-0');
+            printArea.style.opacity = "1";
+            document.getElementById('btnPdf').classList.remove('hidden');
+        }
         function gerarPDF() {
             const element = document.getElementById('printArea');
             const btn = document.getElementById('btnPdf');
