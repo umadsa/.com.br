@@ -73,7 +73,7 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwj7piuiqToBuYjzKob73dEjFeUZ23Ny7zGh_glOxpTdCkHWsvMD9NgWBb296-K-JUZ/exec";
         
-        async function carregar() {
+       async function carregar() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
             
@@ -89,23 +89,28 @@
                 if (result.status === 'success') {
                     const data = result.data;
                     
-                    // 1. Preenche os textos IMEDIATAMENTE
                     document.getElementById('fNome').innerText = data.nome;
                     document.getElementById('fCargo').innerText = data.cargo;
-                    document.getElementById('vNasc').innerText = data.nascimento;
                     document.getElementById('vCong').innerText = data.congregacao;
+                    
+                    // FIX: Formata a data no Front-end também, caso o fuso horário do Sheets envie ISO
+                    let nascExibir = data.nascimento;
+                    if (nascExibir && nascExibir.includes('T')) {
+                        const d = new Date(nascExibir);
+                        // Força a data local sem distorção de fuso
+                        nascExibir = d.getUTCDate().toString().padStart(2, '0') + '/' + 
+                                     (d.getUTCMonth() + 1).toString().padStart(2, '0') + '/' + 
+                                     d.getUTCFullYear();
+                    }
+                    document.getElementById('vNasc').innerText = nascExibir;
                     
                     const idLivre = data.id.replace("LID-", "");
                     document.getElementById('fID').innerText = idLivre.replace(/(\d{4})/g, '$1 ').trim();
                     
-                    // 2. Tenta carregar a foto, mas libera o card de qualquer forma
                     const img = document.getElementById('fFoto');
-                    img.crossOrigin = "anonymous"; // Necessário para o html2canvas não "sujar" o PDF
+                    img.crossOrigin = "anonymous";
                     
-                    // Se a foto carregar, ótimo. Se der erro ou demorar, liberamos o card assim mesmo após 2 segundos
-                    const timeoutFoto = setTimeout(() => {
-                        finalizarCarregamento();
-                    }, 2500);
+                    const timeoutFoto = setTimeout(() => { finalizarCarregamento(); }, 2500);
 
                     img.onload = () => {
                         clearTimeout(timeoutFoto);
@@ -113,18 +118,17 @@
                     };
 
                     img.onerror = () => {
-                        console.warn("Não foi possível carregar a foto do Drive.");
-                        img.src = "https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png"; // Fallback para o Brasão
+                        img.src = "https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png";
                         finalizarCarregamento();
                     };
 
                     img.src = data.urlFoto;
 
                 } else {
-                    document.getElementById('status').innerText = "Líder não encontrado no sistema.";
+                    document.getElementById('status').innerText = "Líder não encontrado.";
                 }
             } catch (err) {
-                document.getElementById('status').innerText = "Falha de conexão com o servidor ministerial.";
+                document.getElementById('status').innerText = "Falha de conexão com o servidor.";
                 console.error(err);
             }
         }
