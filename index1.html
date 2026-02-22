@@ -499,10 +499,7 @@
             
             <p class="text-xs text-gray-400 mb-4 font-bold uppercase tracking-widest">Fique Atento às novidades exclusivas em nossas redes sociais e no Grupo Oficial!</p>
 
-            <button onclick="gerarPDFCredencial()" class="w-full bg-white text-black font-black py-4 rounded-lg hover:bg-gray-200 transition flex items-center justify-center gap-2 uppercase tracking-wide">
-                <i class="fa-solid fa-download"></i> Baixar Credencial (PDF)
-            </button>
-        </div>
+            </div>
     </div>
 
     <div id="credencialContainer">
@@ -804,78 +801,35 @@
 
         let liderIDGerado = ""; // Armazena o ID gerado para botar no PDF
 
-        async function enviarLider(e) {
+      async function enviarLider(e) {
             e.preventDefault();
             const btn = document.getElementById('btnLiderSubmit');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando Credencial...';
+            
+            if (!fotoLiderBase64) {
+                alert("Por favor, anexe uma foto 3x4 antes de continuar.");
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando Cadastro...';
             btn.disabled = true;
 
-            const nome = document.getElementById('liderNome').value;
-            const cargo = document.getElementById('liderCargo').value;
-            const campo = document.getElementById('liderCampo').value;
-            const email = document.getElementById('liderEmail').value;
-            const nascRaw = document.getElementById('liderNasc').value;
-            const nascParts = nascRaw.split('-');
-            const nascFormatado = `${nascParts[2]}/${nascParts[1]}/${nascParts[0]}`;
-            const congregacao = document.getElementById('liderCongregacao').value;
-            
-            // Simula um ID provisório até receber o real do backend, para a foto ficar bonita.
-            liderIDGerado = "LID-" + new Date().getTime().toString().slice(-8);
-
-            // Preenche o template FRENTE
-            document.getElementById('credNomeFrente').innerText = nome.split(' ')[0] + " " + (nome.split(' ')[1] || "");
-            document.getElementById('credCargoFrente').innerText = cargo;
-            document.getElementById('credFotoFrente').src = fotoLiderBase64;
-            
-            // Preenche o template VERSO
-            document.getElementById('credNomeVerso').innerText = nome;
-            document.getElementById('credIdVerso').innerText = liderIDGerado;
-            document.getElementById('credCampoVerso').innerText = campo;
-            document.getElementById('credCongVerso').innerText = congregacao;
-            document.getElementById('credNascVerso').innerText = nascFormatado;
-
-            const element = document.getElementById('credencialTemplate');
-            
-            // Revela para o html2pdf conseguir capturar
-            document.getElementById('credencialContainer').style.opacity = "1";
-            document.getElementById('credencialContainer').style.zIndex = "1000";
-
-            const opt = {
-                margin: 0,
-                filename: 'Credencial_UMADSA.pdf',
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { scale: 3, useCORS: true, backgroundColor: "#ffffff" },
-                jsPDF: { unit: 'px', format: [850, 590], orientation: 'landscape' } // Formato perfeito pra imprimir
+            const payload = {
+                authToken: atob(_k),
+                action: "cadastroLider",
+                nome: document.getElementById('liderNome').value,
+                nascimento: document.getElementById('liderNasc').value,
+                telefone: document.getElementById('liderTel').value,
+                email: document.getElementById('liderEmail').value,
+                campo: document.getElementById('liderCampo').value,
+                congregacao: document.getElementById('liderCongregacao').value,
+                cargo: document.getElementById('liderCargo').value,
+                // Enviamos apenas a string base64 pura da imagem (sem o prefixo data:image/...)
+                fotoArquivo: fotoLiderBase64.split(',')[1],
+                fotoTipo: "image/jpeg"
             };
 
             try {
-                // Aguarda meio segundo para garantir que a imagem base64 renderizou na div
-                await new Promise(r => setTimeout(r, 500));
-                
-                // Gera o PDF em Base64
-                const pdfBase64Data = await html2pdf().set(opt).from(element).outputPdf('datauristring');
-                const pureBase64 = pdfBase64Data.split(',')[1];
-                
-                // Esconde a div novamente
-                document.getElementById('credencialContainer').style.opacity = "0";
-                document.getElementById('credencialContainer').style.zIndex = "-100";
-
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...';
-
-                const payload = {
-                    authToken: atob(_k),
-                    action: "cadastroLider",
-                    nome: nome,
-                    nascimento: nascRaw,
-                    telefone: document.getElementById('liderTel').value,
-                    email: email,
-                    campo: campo,
-                    congregacao: congregacao,
-                    cargo: cargo,
-                    pdfBase64: pureBase64 // Envia o PDF pro Google Script disparar o e-mail
-                };
-
                 const response = await fetch(API_CADASTROS, { 
                     method: 'POST', 
                     redirect: 'follow',
@@ -886,10 +840,8 @@
                 const resData = await response.json();
                 
                 if (resData.status === 'success') {
-                    // Atualiza o ID na tela de sucesso com o real retornado pelo servidor
-                    document.getElementById('msgLiderNome').innerText = `Obrigado, ${nome.split(' ')[0]}!`;
                     liderIDGerado = resData.data.idLider; 
-                    document.getElementById('credIdVerso').innerText = liderIDGerado; // Atualiza pro PDF que será baixado manualmente
+                    document.getElementById('msgLiderNome').innerText = `Obrigado, ${payload.nome.split(' ')[0]}!`;
 
                     closeModal('liderSurpresaModal');
                     document.getElementById('formLider').reset();
@@ -900,15 +852,15 @@
                     alert("Erro: " + (resData.message || "Erro desconhecido."));
                 }
             } catch (error) { 
-                alert("Erro ao processar o cadastro ou gerar a credencial."); 
+                alert("Falha ao enviar cadastro. Tente novamente.");
                 console.error(error);
-                document.getElementById('credencialContainer').style.opacity = "0";
             } finally { 
-                btn.innerHTML = originalText; 
+                btn.innerHTML = originalText;
                 btn.disabled = false; 
             }
         }
-
+        
+        
         // Função para o botão do Modal de Sucesso (baixar o PDF localmente pro PC/Celular do líder)
         function gerarPDFCredencial() {
             const element = document.getElementById('credencialTemplate');
