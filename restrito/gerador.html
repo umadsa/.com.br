@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Credencial | UMADSA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #1a1a1a; color: white; }
+        .cred-card {
+            width: 380px; height: 550px; background: #111; border: 3px solid #D4AF37;
+            border-radius: 15px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
+        }
+        .cred-header { border-bottom: 2px solid rgba(212,175,55,0.3); width: 100%; text-align: center; padding-bottom: 10px; margin-bottom: 15px; }
+        .cred-logo { width: 60px; margin-bottom: 5px; }
+        .cred-photo-box { width: 140px; height: 180px; border: 3px solid #D4AF37; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .cred-photo { width: 100%; height: 100%; object-fit: cover; }
+        .cred-name { font-size: 20px; font-weight: 900; text-align: center; text-transform: uppercase; color: #fff; }
+        .cred-cargo-badge { background-color: #D4AF37; color: #000; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 800; margin-top: 10px; }
+        .cred-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; margin-top: 10px; font-weight: bold; }
+        .cred-value { font-size: 13px; border-bottom: 1px dashed rgba(255,255,255,0.2); width: 100%; text-align: center; }
+        #printArea { display: flex; gap: 20px; justify-content: center; padding: 20px; background: white; width: fit-content; margin: auto; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-2xl font-bold text-yellow-500 mb-6">Sua Credencial Ministerial</h1>
+        
+        <div id="loading" class="mb-4">Buscando dados do servidor...</div>
+        
+        <div id="printArea" class="hidden shadow-2xl">
+            <div class="cred-card" id="frente">
+                <div class="cred-header">
+                    <img src="https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png" class="cred-logo mx-auto">
+                    <span class="text-[12px] font-bold text-yellow-500">UMADSA MINISTERIAL</span>
+                </div>
+                <div class="cred-photo-box">
+                    <img id="fotoFrente" src="" class="cred-photo">
+                </div>
+                <div class="cred-name" id="nomeFrente">---</div>
+                <div class="cred-cargo-badge" id="cargoFrente">---</div>
+                <div class="mt-auto text-[10px] text-gray-400">Válida até: Dezembro/2026</div>
+            </div>
+
+            <div class="cred-card" id="verso">
+                <div class="text-yellow-500 font-bold border-b border-yellow-500 w-full text-center mb-4">DADOS MINISTERIAIS</div>
+                <div class="w-full text-left">
+                    <div class="cred-label">ID Liderança</div>
+                    <div class="cred-value" id="idVerso">---</div>
+                    <div class="cred-label">Campo / Congregação</div>
+                    <div class="cred-value" id="localVerso">---</div>
+                    <div class="cred-label">Data de Nascimento</div>
+                    <div class="cred-value" id="nascVerso">---</div>
+                </div>
+                <div class="mt-auto w-full text-center">
+                    <div class="border-t border-white w-3/4 mx-auto mt-4"></div>
+                    <div class="text-[10px] text-yellow-500 font-bold">Pr. Márcio Dias</div>
+                    <div class="text-[8px] text-gray-400 uppercase">Presidente UMADSA</div>
+                </div>
+            </div>
+        </div>
+
+        <button id="btnDownload" onclick="baixarPDF()" class="mt-8 bg-yellow-600 hover:bg-yellow-500 text-black font-black py-4 px-8 rounded-full hidden transition-all">
+            BAIXAR CREDENCIAL EM PDF
+        </button>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwj7piuiqToBuYjzKob73dEjFeUZ23Ny7zGh_glOxpTdCkHWsvMD9NgWBb296-K-JUZ/exec";
+        
+        async function carregarDados() {
+            const params = new URLSearchParams(window.location.search);
+            const idLider = params.get('id');
+
+            if (!idLider) {
+                document.getElementById('loading').innerText = "Erro: ID não encontrado na URL.";
+                return;
+            }
+
+            try {
+                // Para esta função funcionar, você precisará adicionar a action "buscarLider" no seu code.gs
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'buscarLider', idLider: idLider, authToken: 'umadsa2026tokendeseguranca' })
+                });
+                const res = await response.json();
+
+                if (res.status === 'success') {
+                    const d = res.data;
+                    document.getElementById('nomeFrente').innerText = d.nome.split(' ')[0] + (d.nome.split(' ')[1] ? ' ' + d.nome.split(' ')[1] : '');
+                    document.getElementById('cargoFrente').innerText = d.cargo;
+                    document.getElementById('idVerso').innerText = d.id;
+                    document.getElementById('localVerso').innerText = `${d.campo} / ${d.congregacao}`;
+                    document.getElementById('nascVerso').innerText = d.nascimento;
+                    document.getElementById('fotoFrente').src = d.urlFoto;
+
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('printArea').classList.remove('hidden');
+                    document.getElementById('btnDownload').classList.remove('hidden');
+                } else {
+                    document.getElementById('loading').innerText = "Líder não encontrado ou ID inválido.";
+                }
+            } catch (e) {
+                document.getElementById('loading').innerText = "Erro ao conectar com o servidor.";
+            }
+        }
+
+        function baixarPDF() {
+            const element = document.getElementById('printArea');
+            const opt = {
+                margin: 0,
+                filename: `Credencial_UMADSA.pdf`,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 3, useCORS: true },
+                jsPDF: { unit: 'px', format: [850, 590], orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        window.onload = carregarDados;
+    </script>
+</body>
+</html>
