@@ -1,3 +1,160 @@
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Credencial Premium | UMADSA</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+
+        body { font-family: 'Montserrat', sans-serif; background: #222; color: #fff; }
+
+        /* Layout para Dobra (Frente e Verso na mesma página) */
+
+        #printArea { 
+
+            width: 450px; 
+
+            background: white; 
+
+            padding: 20px; 
+
+            display: flex; 
+
+            flex-direction: column; 
+
+            gap: 2px; /* Linha de dobra sutil */
+
+            margin: auto;
+
+        }
+
+        .card {
+
+            width: 400px; height: 250px; /* Formato Cartão de Crédito */
+
+            background: #000; border-radius: 12px;
+
+            position: relative; overflow: hidden; color: white;
+
+            border: 1px solid #333;
+
+        }
+
+        .gold-bar { background: #D4AF37; height: 100%; width: 40px; position: absolute; right: 0; top: 0; display: flex; align-items: center; justify-content: center; }
+
+        .priority-text { transform: rotate(90deg); color: #000; font-weight: 800; font-size: 14px; letter-spacing: 4px; }
+
+        .logo-main { width: 50px; position: absolute; top: 20px; right: 60px; }
+
+        .photo-box { width: 90px; height: 110px; border: 2px solid #D4AF37; position: absolute; left: 25px; top: 50px; border-radius: 5px; overflow: hidden; background: #111; }
+
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .info-container { position: absolute; left: 130px; top: 55px; right: 50px; text-align: left; }
+
+        .name-text { font-size: 18px; font-weight: 800; line-height: 1.2; text-transform: uppercase; color: #D4AF37; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .cargo-text { font-size: 12px; font-weight: 400; color: #aaa; margin-top: 5px; }
+
+        .id-text { font-family: 'Courier New', monospace; font-size: 16px; color: #D4AF37; position: absolute; bottom: 30px; left: 130px; letter-spacing: 2px; }
+
+        
+
+        /* Verso */
+
+        .magnetic-stripe { background: #D4AF37; height: 40px; width: 100%; margin-top: 30px; }
+
+        .barcode { width: 150px; height: 40px; background: white; margin: 20px auto; }
+
+    </style>
+
+</head>
+
+<body class="p-8">
+
+    <div class="text-center">
+
+        <div id="printArea" class="shadow-2xl">
+
+            <div class="card" id="cardFrente">
+
+                <div class="p-4 text-left italic text-[14px]">Ministerial Card</div>
+
+                <div class="logo-main"><img src="https://umadsa.github.io/.com.br/assets/logotipos/BRASAO_UMADSA_ORG.png"></div>
+
+                <div class="photo-box"><img id="fFoto" src=""></div>
+
+                <div class="info-container">
+
+                    <div class="name-text" id="fNome">NOME COMPLETO DO LÍDER AQUI</div>
+
+                    <div class="cargo-text" id="fCargo">LÍDER DE CAMPO</div>
+
+                </div>
+
+                <div class="id-text" id="fID">0000 0000 0000 0000</div>
+
+                <div class="gold-bar"><div class="priority-text">#UMADSA 2026™</div></div>
+
+            </div>
+
+
+
+            <div class="card mt-2">
+
+                <div class="magnetic-stripe"></div>
+
+                <div class="p-4 text-left text-[10px] leading-tight">
+
+                    ESTE CARTÃO É DE USO PESSOAL E INTRANSFERÍVEL.<br>
+
+                    EM CASO DE PERDA, COMUNICAR À REGIONAL IMEDIATAMENTE.
+
+                </div>
+
+                <div class="flex px-4 justify-between items-end mt-4">
+
+                    <div class="text-left text-[10px]">
+
+                        <span class="text-yellow-500">NASCIMENTO:</span> <span id="vNasc">00/00/0000</span><br>
+
+                        <span class="text-yellow-500">CONGREGAÇÃO:</span> <span id="vCong">SEDE</span>
+
+                    </div>
+
+                    <div class="text-right">
+
+                        <div class="border-t border-white w-24 text-[8px] text-center pt-1">PRESIDENTE UMADSA | MARCIO DIAS</div>
+
+                    </div>
+
+                </div>
+
+                <div class="barcode flex items-center justify-center text-black font-bold text-[10px]">@umdsaoficial | umadsa.github.io/.com.br/index1</div>
+
+            </div>
+
+        </div>
+
+
+
+        <button onclick="gerarPDF()" class="mt-8 bg-yellow-500 text-black px-10 py-4 rounded-full font-bold">BAIXAR CARTEIRINHA</button>
+
+    </div>
+
+
+
 <script>
         // URL da sua API (Certifique-se de que é a URL da Implantação mais recente)
         const API_URL = "https://script.google.com/macros/s/AKfycbwj7piuiqToBuYjzKob73dEjFeUZ23Ny7zGh_glOxpTdCkHWsvMD9NgWBb296-K-JUZ/exec";
@@ -70,3 +227,7 @@
         
         window.onload = carregar;
     </script>
+
+</body>
+
+</html>
